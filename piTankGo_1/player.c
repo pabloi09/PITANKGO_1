@@ -34,14 +34,10 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 // Procedimiento de inicializacion del objeto especifico
 // Nota: parte inicialización común a InicializaPlayDisparo y InicializaPlayImpacto
 void InicializaPlayer (TipoPlayer *p_player) {
-	// A completar por el alumno
-	// ...
-	TipoEfecto *efecto=p_player->p_efecto;
+	TipoEfecto *efecto=p_player.p_efecto;
 	p_player->duracion_nota_actual=efecto->duraciones[0];
 	p_player->frecuencia_nota_actual=efecto->frecuencias[0];
 	p_player->posicion_nota_actual=0;
-	p_player->
-
 }
 
 //------------------------------------------------------
@@ -50,45 +46,47 @@ void InicializaPlayer (TipoPlayer *p_player) {
 int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
-	result=flags & FLAG_START_DISPARO;
+	result=flags_system & FLAG_START_DISPARO;
+	flags_player=0x0;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
 
 int CompruebaStartImpacto (fsm_t* this) {
 	int result = 0;
-
-	// A completar por el alumno
-	// ...
-
+	piLock (SYSTEM_FLAGS_KEY);
+	result=flags_player & FLAG_START_IMPACTO;
+	flags_player=0x0;
+	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
 
 int CompruebaNuevaNota (fsm_t* this){
-	int result = 0;
-
-	// A completar por el alumno
-	// ...
-
+	int result;
+	piLock (SYSTEM_FLAGS_KEY);
+	result=!(flags_player & FLAG_PLAYER_END);
+	flags_player=0x0;
+	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
 
 int CompruebaNotaTimeout (fsm_t* this) {
-	int result = 0;
-
-	// A completar por el alumno
-	// ...
-
+	int result;
+	piLock (SYSTEM_FLAGS_KEY);
+	result=flags_player & FLAG_NOTA_TIMEOUT;
+	flags_player=0x0;
+	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
 
 int CompruebaFinalEfecto (fsm_t* this) {
 	int result = 0;
-
-	// A completar por el alumno
-	// ...
-
+	piLock (SYSTEM_FLAGS_KEY);
+	result=flags_player & FLAG_PLAYER_END;
+	flags_player=0x0;
+	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
+
 }
 
 //------------------------------------------------------
@@ -96,28 +94,39 @@ int CompruebaFinalEfecto (fsm_t* this) {
 //------------------------------------------------------
 
 void InicializaPlayDisparo (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+	TipoPlayer * p_player=this.user_data;
+	p_player.p_efecto=p_player.efecto_disparo;
+	InicializaPlayer(p_player);
+	int mil=millis()+p_player.duracion_nota_actual;
+	delay_until(mil);
+	
 }
 
 void InicializaPlayImpacto (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+	TipoPlayer * p_player=this.user_data;
+	p_player.p_efecto=p_player.efecto_impacto;
+	InicializaPlayer(p_player);
+	int mil=millis()+p_player.duracion_nota_actual;
+	delay_until(mil);
 }
 
 void ComienzaNuevaNota (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+	int mil=millis()+p_player.duracion_nota_actual;
+	delay_until(mil);
 }
 
 void ActualizaPlayer (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+	TipoPlayer * player=(player*)this.user_data;
+	TipoEfecto *efecto=player->p_efecto;
+	player->posicion_nota_actual+=1;
+	player->duracion_nota_actual=efecto->duraciones[player->posicion_nota_actual];
+	player->frecuencia_nota_actual=efecto->frecuencias[player->posicion_nota_actual];
+
 }
 
 void FinalEfecto (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+	TipoPlayer * player=(player*)this.user_data;
+	InicializaPlayer(player);
 }
 
 //------------------------------------------------------

@@ -31,7 +31,6 @@ volatile int flags_player = 0;
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	int result = 0;
 	piLock (STD_IO_BUFFER_KEY);
-
 		// configura wiringPi
 		if (wiringPiSetupGpio () < 0) {
 			printf ("No se pudo configurar wiringPi\n");
@@ -39,7 +38,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 			return -1;
 	    }
 
-		piUnlock (STD_IO_BUFFER_KEY);
+	piUnlock (STD_IO_BUFFER_KEY);
 
 		return 1;
 	return result;
@@ -52,18 +51,30 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 // igualmente arrancará el thread de exploración del teclado del PC
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
-
-	// A completar por el alumno...
-	// ...
-
-	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
-	flags=0;
+	piLock(PLAYER_FLAGS_KEY);
+	flags_player=0;
+	piUnlock(PLAYER_FLAGS_KEY);
 	if (result != 0) {
 		printf ("No empieza!!!\n");
 		return -1;
 	}
-
+	char * nombre_disparo="despacito";
+	char * nombre_impacto="starwars";
+	TipoEfecto *efecto_disparo=(TipoEfecto*) malloc(sizeof(TipoEfecto));
+	TipoEfecto *efecto_impacto=(TipoEfecto*) malloc(sizeof(TipoEfecto));
+	TipoPlayer *player=(TipoPlayer*) malloc(sizeof(TipoPlayer));
+	if(InicializaEfecto(efecto_disparo,nombre_disparo,frecuenciaDespacito,tiempoDespacito,160)<1){
+		printf("\n[ERROR!!!][InicializaEfecto]\n");
+		fflush(stdout);
+	}
+	if(InicializaEfecto(efecto_impacto,nombre_impacto,frecuenciaStarwars,tiempoStarwars,59)<1){
+		printf("\n[ERROR!!!][InicializaEfecto]\n");
+		fflush(stdout);
+	}
+	player.efecto_disparo=efecto_disparo;
+	player.efecto_impacto=efecto_impacto;
+	InicializaPlayer(player);
 	return result;
 }
 
@@ -83,36 +94,33 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
-				// A completar por el alumno...
-				// ...
+				
 				case 'a':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_DISPARO;
 					piUnlock (PLAYER_FLAGS_KEY);
+					piLock(SYSTEM_FLAGS_KEY);
 					printf("Tecla EMPEZAR pulsada!\n");
+					piUnlock(SYSTEM_FLAGS_KEY);
 					fflush(stdout);
 					break;
 				case 's':
 					piLock (PLAYER_FLAGS_KEY);
-					flags_player |= FLAG_START_IMPACTO;
+					flags_player |= FLAG_PLAYER_END;
 					piUnlock (PLAYER_FLAGS_KEY);
-					printf("Tecla SIGUIENTE pulsada!\n");
+					piLock(SYSTEM_FLAGS_KEY);
+					printf("Tecla SIGUIENTE NOTA pulsada!\n");
+					piUnlock(SYSTEM_FLAGS_KEY);
 					fflush(stdout);
 					break;
 				case 'd':
 					piLock (PLAYER_FLAGS_KEY);
-					flags_player |= FLAG_PLAYER_STOP;
+					flags_player |= FLAG_START_IMPACTO;
 					piUnlock (PLAYER_FLAGS_KEY);
-					printf("Tecla STOP pulsada!\n");
+					piLock(SYSTEM_FLAGS_KEY);
+					printf("Tecla MELODIA IMPACTO pulsada!\n");
+					piUnlock(SYSTEM_FLAGS_KEY);
 					fflush(stdout);
-					break;
-				case 'F':
-					piLock (PLAYER_FLAGS_KEY);
-					flags_player |= FLAG_PLAYER_END;
-					piUnlock (PLAYER_FLAGS_KEY);
-					printf("Tecla END pulsada!\n");
-					fflush(stdout);
-					exit(0);
 					break;
 
 				default:
@@ -141,7 +149,6 @@ int main ()
 
 	// Configuracion e inicializacion del sistema
 	ConfiguraSistema (&sistema);
-
 	InicializaSistema (&sistema);
 
 	fsm_trans_t reproductor[] = {
@@ -155,15 +162,9 @@ int main ()
 	};
 
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
-	// A completar por el alumno...
-	// ...
-
 	next = millis();
 	while (1) {
 		fsm_fire (player_fsm);
-		// A completar por el alumno...
-		// ...
-
 		next += CLK_MS;
 		delay_until (next);
 	}

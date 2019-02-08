@@ -69,9 +69,9 @@
 // ATENCION: Valores a modificar por el alumno
 #define FLAG_START_DISPARO 		0x01
 #define FLAG_START_IMPACTO 		0x02
-#define FLAG_PLAYER_STOP 		0x03
-#define FLAG_PLAYER_END			0x04
-#define FLAG_NOTA_TIMEOUT		0x05
+#define FLAG_PLAYER_STOP 		0x04
+#define FLAG_PLAYER_END			0x08
+#define FLAG_NOTA_TIMEOUT		0x16
 
 enum interruption_sources {
 	TARGET_ISR,
