@@ -16,6 +16,10 @@
 #include "player.h"
 #include "torreta.h"
 
+
+
+
+
 // Posibles estados de las FSMs
 enum fsm_state {
 	WAIT_START,

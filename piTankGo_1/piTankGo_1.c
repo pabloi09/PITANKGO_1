@@ -15,8 +15,8 @@ int tiemposDisparo[16] = {75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75};
 int frecuenciasImpacto[32] = {97,109,79,121,80,127,123,75,119,96,71,101,98,113,92,70,114,75,86,103,126,118,128,77,114,119,72};
 int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
 
-int flags_juego = 0;
-int flags_player = 0;
+volatile int flags_juego = 0;
+volatile int flags_player = 0;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
@@ -30,9 +30,18 @@ int flags_player = 0;
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	int result = 0;
-	// A completar por el alumno...
-	// ...
+	piLock (STD_IO_BUFFER_KEY);
 
+		// configura wiringPi
+		if (wiringPiSetupGpio () < 0) {
+			printf ("No se pudo configurar wiringPi\n");
+			piUnlock (STD_IO_BUFFER_KEY);
+			return -1;
+	    }
+
+		piUnlock (STD_IO_BUFFER_KEY);
+
+		return 1;
 	return result;
 }
 
@@ -49,9 +58,9 @@ int InicializaSistema (TipoSistema *p_sistema) {
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
-
+	flags=0;
 	if (result != 0) {
-		printf ("Thread didn't start!!!\n");
+		printf ("No empieza!!!\n");
 		return -1;
 	}
 
@@ -76,14 +85,33 @@ PI_THREAD (thread_explora_teclado_PC) {
 			switch(teclaPulsada) {
 				// A completar por el alumno...
 				// ...
-				case 's':
-					// A completar por el alumno...
-					// ...
-					printf("Tecla S pulsada!\n");
+				case 'a':
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_START_DISPARO;
+					piUnlock (PLAYER_FLAGS_KEY);
+					printf("Tecla EMPEZAR pulsada!\n");
 					fflush(stdout);
 					break;
-
-				case 'q':
+				case 's':
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_START_IMPACTO;
+					piUnlock (PLAYER_FLAGS_KEY);
+					printf("Tecla SIGUIENTE pulsada!\n");
+					fflush(stdout);
+					break;
+				case 'd':
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_PLAYER_STOP;
+					piUnlock (PLAYER_FLAGS_KEY);
+					printf("Tecla STOP pulsada!\n");
+					fflush(stdout);
+					break;
+				case 'F':
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_PLAYER_END;
+					piUnlock (PLAYER_FLAGS_KEY);
+					printf("Tecla END pulsada!\n");
+					fflush(stdout);
 					exit(0);
 					break;
 

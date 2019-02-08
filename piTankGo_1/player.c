@@ -24,9 +24,10 @@
 //
 //------------------------------------------------------
 int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias, int *array_duraciones, int num_notas) {
-	// A completar por el alumno...
-	// ...
-
+	p_efecto->duraciones=array_duraciones;
+	p_efecto->frecuencias=array_frecuencias;
+	p_efecto->nombre=nombre;
+	p_efecto->num_notas=num_notas;
 	return p_efecto->num_notas;
 }
 
@@ -35,18 +36,22 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 void InicializaPlayer (TipoPlayer *p_player) {
 	// A completar por el alumno
 	// ...
+	TipoEfecto *efecto=p_player->p_efecto;
+	p_player->duracion_nota_actual=efecto->duraciones[0];
+	p_player->frecuencia_nota_actual=efecto->frecuencias[0];
+	p_player->posicion_nota_actual=0;
+	p_player->
+
 }
 
 //------------------------------------------------------
 // FUNCIONES DE ENTRADA O DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
-
 int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
-
-	// A completar por el alumno
-	// ...
-
+	piLock (SYSTEM_FLAGS_KEY);
+	result=flags & FLAG_START_DISPARO;
+	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
 
