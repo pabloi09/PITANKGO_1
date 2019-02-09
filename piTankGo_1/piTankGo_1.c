@@ -15,8 +15,8 @@ int tiemposDisparo[16] = {75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75};
 int frecuenciasImpacto[32] = {97,109,79,121,80,127,123,75,119,96,71,101,98,113,92,70,114,75,86,103,126,118,128,77,114,119,72};
 int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
 
-volatile int flags_juego = 0;
-volatile int flags_player = 0;
+int flags_juego = 0;
+int flags_player = 0;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
@@ -30,7 +30,7 @@ volatile int flags_player = 0;
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	int result = 0;
-	piLock (STD_IO_BUFFER_KEY);
+	piLock(STD_IO_BUFFER_KEY);
 		// configura wiringPi
 		if (wiringPiSetupGpio () < 0) {
 			printf ("No se pudo configurar wiringPi\n");
@@ -38,7 +38,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 			return -1;
 	    }
 
-	piUnlock (STD_IO_BUFFER_KEY);
+	piUnlock(STD_IO_BUFFER_KEY);
 
 		return 1;
 	return result;
@@ -72,8 +72,8 @@ int InicializaSistema (TipoSistema *p_sistema) {
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
 		fflush(stdout);
 	}
-	player.efecto_disparo=efecto_disparo;
-	player.efecto_impacto=efecto_impacto;
+	player->efecto_disparo=*efecto_disparo;
+	player->efecto_impacto=*efecto_impacto;
 	InicializaPlayer(player);
 	return result;
 }
