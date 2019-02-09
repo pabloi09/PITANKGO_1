@@ -3,7 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "$C:\\Users\\pablo\\Desktop\\PITANKGO_1\\piTankGo_1"
+                "$C:\\Users\\pablo\\Desktop\\PITANKGO_1\\piTankGo_1\\includePath"
             ],
             "defines": [
                 "_DEBUG",
