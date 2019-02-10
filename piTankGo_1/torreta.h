@@ -35,7 +35,7 @@ typedef struct {
 	// ...
 } TipoTorreta;
 
-extern int flags_juego;
+extern volatile int flags_juego;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
 void InicializaTorreta (TipoTorreta *p_torreta);

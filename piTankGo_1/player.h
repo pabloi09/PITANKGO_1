@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <wiringPi.h>
+#include <pigpio.h>
 
 #include "piTankGoLib.h"
 
@@ -38,7 +38,7 @@ typedef struct {
 	// ...
 } TipoPlayer;
 
-extern int flags_player;
+extern volatile int flags_player;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
 int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias, int *array_duraciones, int num_notas);

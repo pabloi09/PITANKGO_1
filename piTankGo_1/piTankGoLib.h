@@ -7,7 +7,7 @@
 #include "fsm.h"
 #include "tmr.h"
 
-#define CLK_MS 10
+#define CLK_MS 10 // PERIODO DE ACTUALIZACION DE LA MAQUINA ESTADOS EN MILISEGUNDOS
 
 // ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
@@ -86,8 +86,8 @@ enum interruption_sources {
 	//JOYSTICK_CENTER_ISR
 };
 
-extern int flags_system;
-extern int flags_player;
+extern volatile int flags_system;
+extern volatile int flags_player;
 
 extern int frecuenciaDespacito[];
 extern int tiempoDespacito[];

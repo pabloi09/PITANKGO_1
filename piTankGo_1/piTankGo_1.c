@@ -15,8 +15,10 @@ int tiemposDisparo[16] = {75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75};
 int frecuenciasImpacto[32] = {97,109,79,121,80,127,123,75,119,96,71,101,98,113,92,70,114,75,86,103,126,118,128,77,114,119,72};
 int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
 
-int flags_juego = 0;
-int flags_player = 0;
+pthread_t *thread_explora_teclado=NULL;	//Manejador de hebra que explora teclado
+
+volatile int flags_juego = 0;
+volatile int flags_player = 0;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
@@ -24,24 +26,25 @@ int flags_player = 0;
 
 // int ConfiguracionSistema (TipoSistema *p_sistema): procedimiento de configuracion del sistema.
 // Realizará, entra otras, todas las operaciones necesarias para:
-// configurar el uso de posibles librerías (e.g. Wiring Pi),
+// configurar el uso de posibles librerías (e.g. PiGPIO),
 // configurar las interrupciones externas asociadas a los pines GPIO,
 // configurar las interrupciones periódicas y sus correspondientes temporizadores,
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
 int ConfiguraSistema (TipoSistema *p_sistema) {
-	int result = 0;
+	piLock(SYSTEM_FLAGS_KEY);
 	piLock(STD_IO_BUFFER_KEY);
-		// configura wiringPi
-		if (wiringPiSetupGpio () < 0) {
-			printf ("No se pudo configurar wiringPi\n");
+		// configura PiGPIO
+		if (gpioInitialise() < 0) {
+			printf ("No se pudo configurar PiGPIO\n");
 			piUnlock (STD_IO_BUFFER_KEY);
-			return -1;
+			return 1;
 	    }
+		// Configurar los pines utilizando las variables definidas en PiTankGoLib.h
+		// ...
 
 	piUnlock(STD_IO_BUFFER_KEY);
-
-		return 1;
-	return result;
+	piUnlock(SYSTEM_FLAGS_KEY);
+	return 0;
 }
 
 // int InicializaSistema (TipoSistema *p_sistema): procedimiento de inicializacion del sistema.
@@ -50,13 +53,21 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 // la torreta, los efectos, etc.
 // igualmente arrancará el thread de exploración del teclado del PC
 int InicializaSistema (TipoSistema *p_sistema) {
-	int result = 0;
-	result = piThreadCreate (thread_explora_teclado_PC);
+	piLock(SYSTEM_FLAGS_KEY);
+
+	p_sistema->debug=0;	// Modo traza desactivado
+	InicializaTorreta(&(*p_sistema).torreta);
+	InicializaPlayer(&(*p_sistema).player);
+	p_sistema->teclaPulsada = '\0';
+
+	piLock (STD_IO_BUFFER_KEY);
+	thread_explora_teclado = gpioStartThread (thread_explora_teclado_PC,"");
 	piLock(PLAYER_FLAGS_KEY);
 	flags_player=0;
 	piUnlock(PLAYER_FLAGS_KEY);
-	if (result != 0) {
+	if (thread_explora_teclado == NULL) {
 		printf ("No empieza!!!\n");
+		piUnlock (STD_IO_BUFFER_KEY);
 		return -1;
 	}
 	char * nombre_disparo="despacito";
@@ -74,15 +85,17 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	}
 	player->efecto_disparo=*efecto_disparo;
 	player->efecto_impacto=*efecto_impacto;
-	InicializaPlayer(player);
-	return result;
+
+	piUnlock (STD_IO_BUFFER_KEY);
+	piUnlock(SYSTEM_FLAGS_KEY);
+	return 0;
 }
 
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
 
-PI_THREAD (thread_explora_teclado_PC) {
+void *thread_explora_teclado_PC(void *arg) {	//Rutina de la hebra explorar teclado
 	int teclaPulsada;
 
 	while(1) {
@@ -92,6 +105,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 
 		if(kbhit()) {
 			teclaPulsada = kbread();
+			piLock(STD_IO_BUFFER_KEY);
 
 			switch(teclaPulsada) {
 				
@@ -99,29 +113,30 @@ PI_THREAD (thread_explora_teclado_PC) {
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_DISPARO;
 					piUnlock (PLAYER_FLAGS_KEY);
-					piLock(SYSTEM_FLAGS_KEY);
+
 					printf("Tecla EMPEZAR pulsada!\n");
-					piUnlock(SYSTEM_FLAGS_KEY);
 					fflush(stdout);
 					break;
 				case 's':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_PLAYER_END;
 					piUnlock (PLAYER_FLAGS_KEY);
-					piLock(SYSTEM_FLAGS_KEY);
+
 					printf("Tecla SIGUIENTE NOTA pulsada!\n");
-					piUnlock(SYSTEM_FLAGS_KEY);
 					fflush(stdout);
 					break;
 				case 'd':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_IMPACTO;
 					piUnlock (PLAYER_FLAGS_KEY);
-					piLock(SYSTEM_FLAGS_KEY);
+
 					printf("Tecla MELODIA IMPACTO pulsada!\n");
-					piUnlock(SYSTEM_FLAGS_KEY);
 					fflush(stdout);
 					break;
+				/* Definir tecla para terminar el juego y que ejecute:
+				 * gpioStopThread(thread_explora_teclado);
+				 * gpioTerminate();
+				 */
 
 				default:
 					printf("INVALID KEY!!!\n");
@@ -161,7 +176,7 @@ int main ()
 		{-1, NULL, -1, NULL },
 	};
 
-	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
+	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.torreta));
 	next = millis();
 	while (1) {
 		fsm_fire (player_fsm);
@@ -169,5 +184,7 @@ int main ()
 		delay_until (next);
 	}
 
+	fsm_destroy (player_fsm);	//Libera laaquina de estados
+	gpioTerminate();
 	return 0;
 }

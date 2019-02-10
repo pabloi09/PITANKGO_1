@@ -49,7 +49,7 @@ int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
 	result=flags_system & FLAG_START_DISPARO;
-	flags_player=0x0;
+	flags_player=0;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
@@ -58,7 +58,7 @@ int CompruebaStartImpacto (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
 	result=flags_player & FLAG_START_IMPACTO;
-	flags_player=0x0;
+	flags_player=0;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
@@ -67,7 +67,7 @@ int CompruebaNuevaNota (fsm_t* this){
 	int result;
 	piLock (SYSTEM_FLAGS_KEY);
 	result=!(flags_player & FLAG_PLAYER_END);
-	flags_player=0x0;
+	flags_player=0;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
@@ -76,7 +76,7 @@ int CompruebaNotaTimeout (fsm_t* this) {
 	int result;
 	piLock (SYSTEM_FLAGS_KEY);
 	result=flags_player & FLAG_NOTA_TIMEOUT;
-	flags_player=0x0;
+	flags_player=0;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
@@ -85,7 +85,7 @@ int CompruebaFinalEfecto (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
 	result=flags_player & FLAG_PLAYER_END;
-	flags_player=0x0;
+	flags_player=0;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 
