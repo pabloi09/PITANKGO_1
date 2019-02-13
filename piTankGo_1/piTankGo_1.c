@@ -18,6 +18,7 @@ int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
 pthread_t *thread_explora_teclado=NULL;	//Manejador de hebra que explora teclado
 
 volatile int flags_juego = 0;
+volatile int flags_system = 0;
 volatile int flags_player = 0;
 
 //------------------------------------------------------
@@ -55,15 +56,13 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 int InicializaSistema (TipoSistema *p_sistema) {
 	piLock(SYSTEM_FLAGS_KEY);
 
-	p_sistema->debug=0;	// Modo traza desactivado
-	InicializaTorreta(&(*p_sistema).torreta);
-	InicializaPlayer(&(*p_sistema).player);
-	p_sistema->teclaPulsada = '\0';
 
 	piLock (STD_IO_BUFFER_KEY);
-	thread_explora_teclado = gpioStartThread (thread_explora_teclado_PC,"");
+	thread_explora_teclado = gpioStartThread (thread_explora_teclado_PC,"\0");
 	piLock(PLAYER_FLAGS_KEY);
 	flags_player=0;
+	flags_juego = 0;
+	flags_system = 0;
 	piUnlock(PLAYER_FLAGS_KEY);
 	if (thread_explora_teclado == NULL) {
 		printf ("No empieza!!!\n");
@@ -75,16 +74,24 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	TipoEfecto *efecto_disparo=(TipoEfecto*) malloc(sizeof(TipoEfecto));
 	TipoEfecto *efecto_impacto=(TipoEfecto*) malloc(sizeof(TipoEfecto));
 	TipoPlayer *player=(TipoPlayer*) malloc(sizeof(TipoPlayer));
-	if(InicializaEfecto(efecto_disparo,nombre_disparo,frecuenciaDespacito,tiempoDespacito,160)<1){
+	TipoTorreta *torreta=(TipoTorreta*) malloc(sizeof(TipoTorreta));
+	if(InicializaEfecto(efecto_disparo,nombre_disparo,frecuenciasDisparo,tiemposDisparo,16)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
 		fflush(stdout);
 	}
-	if(InicializaEfecto(efecto_impacto,nombre_impacto,frecuenciaStarwars,tiempoStarwars,59)<1){
+	if(InicializaEfecto(efecto_impacto,nombre_impacto,frecuenciasImpacto,tiemposImpacto,32)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
 		fflush(stdout);
 	}
+
+	InicializaPlayer(player);
 	player->efecto_disparo=*efecto_disparo;
 	player->efecto_impacto=*efecto_impacto;
+	p_sistema->player=*player;
+	InicializaTorreta(torreta);
+	//p_sistema->torreta;
+	p_sistema->debug=0;	// Modo traza desactivado
+	p_sistema->teclaPulsada = '\0';
 
 	piUnlock (STD_IO_BUFFER_KEY);
 	piUnlock(SYSTEM_FLAGS_KEY);
@@ -137,6 +144,15 @@ void *thread_explora_teclado_PC(void *arg) {	//Rutina de la hebra explorar tecla
 				 * gpioStopThread(thread_explora_teclado);
 				 * gpioTerminate();
 				 */
+				case 'f':
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_PLAYER_STOP;
+					flags_system = 1;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla FLAG_PLAYER_STOP pulsada!\n");
+					fflush(stdout);
+					break;
 
 				default:
 					printf("INVALID KEY!!!\n");
@@ -176,15 +192,17 @@ int main ()
 		{-1, NULL, -1, NULL },
 	};
 
-	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.torreta));
+	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));	// Crea e inicia la maquina de estados
+
 	next = millis();
-	while (1) {
+	while (!flags_system) {
 		fsm_fire (player_fsm);
 		next += CLK_MS;
 		delay_until (next);
 	}
 
-	fsm_destroy (player_fsm);	//Libera laaquina de estados
+	gpioStopThread(thread_explora_teclado);
+	fsm_destroy (player_fsm);	//Libera la maquina de estados
 	gpioTerminate();
 	return 0;
 }
