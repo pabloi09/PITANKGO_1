@@ -42,7 +42,7 @@
 // Distribucion de pines GPIO empleada para el enlace IR
 // ATENCION: Valores a modificar por el alumno
 #define	IR_TX_PIN		0
-#define	IR_RX_PIN		0
+#define	IR_RX_PIN		1
 
 // Distribucion de pines GPIO empleada para la reproducción de efectos
 // ATENCION: Valores a modificar por el alumno
@@ -67,11 +67,11 @@
 
 // FLAGS FSM REPRODUCCION DE EFECTOS DE SONIDO
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_START_DISPARO 		0x01
-#define FLAG_START_IMPACTO 		0x02
-#define FLAG_PLAYER_STOP 		0x04
-#define FLAG_PLAYER_END			0x08
-#define FLAG_NOTA_TIMEOUT		0x16
+#define FLAG_START_DISPARO 		1
+#define FLAG_START_IMPACTO 		2
+#define FLAG_PLAYER_STOP 		4
+#define FLAG_PLAYER_END			8
+#define FLAG_NOTA_TIMEOUT		16
 
 enum interruption_sources {
 	TARGET_ISR,
