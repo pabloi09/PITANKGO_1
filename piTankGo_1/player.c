@@ -49,8 +49,8 @@ void InicializaPlayer (TipoPlayer *p_player) {
 int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
-	result=flags_player && FLAG_START_DISPARO;	//Comprobar si funciona con && y si no usar ==
-	flags_player &= ~FLAG_START_DISPARO;
+	result=flags_player & FLAG_START_DISPARO;	//He cambiado todos los && por
+	flags_player &= ~FLAG_START_DISPARO;        //&. & es el operador bit a bit
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
@@ -65,18 +65,18 @@ int CompruebaStartImpacto (fsm_t* this) {
 }
 
 int CompruebaNuevaNota (fsm_t* this){
-	int result;
+	int result=0;//El fallo tambien podia estar en que aqui no inicializabamos result a 0
 	piLock (SYSTEM_FLAGS_KEY);
-	result=!(flags_player && FLAG_PLAYER_END);
+	result=!(flags_player & FLAG_PLAYER_END);
 	flags_player &= ~FLAG_PLAYER_END;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
 }
 
 int CompruebaNotaTimeout (fsm_t* this) {
-	int result;
+	int result=0;
 	piLock (SYSTEM_FLAGS_KEY);
-	result=flags_player && FLAG_NOTA_TIMEOUT;
+	result=flags_player & FLAG_NOTA_TIMEOUT;
 	flags_player &= ~FLAG_NOTA_TIMEOUT;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
@@ -85,7 +85,7 @@ int CompruebaNotaTimeout (fsm_t* this) {
 int CompruebaFinalEfecto (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
-	result=flags_player && FLAG_PLAYER_END;
+	result=flags_player & FLAG_PLAYER_END;
 	flags_player &= ~FLAG_PLAYER_END;
 	piUnlock (SYSTEM_FLAGS_KEY);
 	return result;
@@ -102,7 +102,6 @@ void InicializaPlayDisparo (fsm_t* this) {
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[0];
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[0];
 	piLock(STD_IO_BUFFER_KEY);
-	softToneWrite (IR_TX_PIN,p_player->frecuencia_nota_actual) ;
 	printf ("Frecuencias disparo:\n%d\n",p_player->frecuencia_nota_actual);
 	fflush(stdout);
 	piUnlock(STD_IO_BUFFER_KEY);
@@ -123,7 +122,8 @@ void ComienzaNuevaNota (fsm_t* this) {
 	TipoPlayer * p_player=this->user_data;
 	piLock(STD_IO_BUFFER_KEY);
 	printf ("%d\n",p_player->frecuencia_nota_actual);
-
+	//Esto estaba puesto en el sitio que no era
+	softToneWrite (IR_TX_PIN,p_player->frecuencia_nota_actual) ;
 	fflush(stdout);
 	piUnlock(STD_IO_BUFFER_KEY);
 }
