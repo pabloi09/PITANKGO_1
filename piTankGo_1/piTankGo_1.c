@@ -131,7 +131,8 @@ PI_THREAD (thread_explora_teclado_PC) {
 					printf("\nTecla EMPEZAR pulsada!\n");
 					fflush(stdout);
 					break;
-				case 's':
+				/*
+				    case 's':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_NOTA_TIMEOUT;
 					piUnlock (PLAYER_FLAGS_KEY);
@@ -139,6 +140,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 					printf("\nTecla SIGUIENTE NOTA pulsada!\n");
 					fflush(stdout);
 					break;
+				*/
 				case 'd':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_IMPACTO;

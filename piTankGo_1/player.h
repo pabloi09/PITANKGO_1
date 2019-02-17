@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pigpio.h>
-
 #include "piTankGoLib.h"
+#include "tmr.h"
 
 #define MAX_NUM_NOTAS 		2000
 #define MAX_NUM_CHAR_NOMBRE	100
@@ -35,7 +35,7 @@ typedef struct {
 	TipoEfecto efecto_impacto; // Efecto de impacto
 
 	// A completar por el alumno (declaracion del temporizador para control duracion notas)
-	// ...
+	tmr_t* tmr_notas;
 } TipoPlayer;
 
 extern volatile int flags_player;
@@ -59,6 +59,6 @@ void ActualizaPlayer (fsm_t* this);
 void FinalEfecto (fsm_t* this);
 
 // Prototipos de procedimientos de atencion a las interrupciones
-//static void timer_player_duracion_nota_actual_isr (union sigval value);
+static void timer_player_duracion_nota_actual_isr (union sigval value);
 
 #endif /* PLAYER_H_ */
