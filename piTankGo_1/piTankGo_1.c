@@ -44,7 +44,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 		// Configurar los pines utilizando las variables definidas en PiTankGoLib.h
 		// ...
 	// configura wiringPi
-			if (wiringPiSetupGpio () < 0) {
+			if (wiringPiSetup () < 0) {
 				printf ("No se pudo configurar wiringPi\n");
 			}
 	pinMode (IR_TX_PIN, OUTPUT);
@@ -85,11 +85,11 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	printf("\nBIENVENIDO A SU TORRETA SOLDADO\n");
 	printf("a:COMIENZA DISPARO\t s:SIGUIENTE NOTA\t d:START IMPACTO\tf:TERMINAR PROGRAMA\n");
 			fflush(stdout);
-	if(InicializaEfecto(&(player->efecto_disparo),nombre_disparo,frecuenciasDisparo,tiemposDisparo,16)<1){
+	if(InicializaEfecto(&(player->efecto_disparo),nombre_disparo,frecuenciaTetris,tiempoTetris,55)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
 		fflush(stdout);
 	}
-	if(InicializaEfecto(&(player->efecto_impacto),nombre_impacto,frecuenciasImpacto,tiemposImpacto,32)<1){
+	if(InicializaEfecto(&(player->efecto_impacto),nombre_impacto,frecuenciaGOT,tiempoGOT,518)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
 		fflush(stdout);
 	}

@@ -85,6 +85,7 @@ void InicializaPlayDisparo (fsm_t* this) {
 	p_player->p_efecto=&(p_player->efecto_disparo);
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[0];
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[0];
+	p_player->posicion_nota_actual=0;
 	piLock(STD_IO_BUFFER_KEY);
 	printf ("Has disparado\nFrecuencias disparo:\n%d Hz\n",p_player->frecuencia_nota_actual);
 	fflush(stdout);
@@ -99,6 +100,7 @@ void InicializaPlayImpacto (fsm_t* this) {
 	p_player->p_efecto=&(p_player->efecto_impacto);
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[0];
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[0];
+	p_player->posicion_nota_actual=0;
 	piLock(STD_IO_BUFFER_KEY);
 	printf ("Frecuencias impacto:\n%d\n",p_player->frecuencia_nota_actual);
 	fflush(stdout);
@@ -139,17 +141,15 @@ void FinalEfecto (fsm_t* this) {
 	fflush(stdout);
 	piUnlock(STD_IO_BUFFER_KEY);
 	TipoPlayer * p_player=this->user_data;
-	free(p_player->p_efecto);
-	free(&p_player->duracion_nota_actual);
-	free(&p_player->frecuencia_nota_actual);
 	InicializaPlayer(p_player);
+	softToneWrite (IR_TX_PIN,0);
 }
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
 
-static void timer_player_duracion_nota_actual_isr (union sigval value) {
+void timer_player_duracion_nota_actual_isr (union sigval value) {
 	piLock (PLAYER_FLAGS_KEY);
 	flags_player |= FLAG_NOTA_TIMEOUT;
 	piUnlock (PLAYER_FLAGS_KEY);

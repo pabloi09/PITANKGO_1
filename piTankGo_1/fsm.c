@@ -27,7 +27,7 @@ fsm_init (fsm_t* this, int state, fsm_trans_t* tt, void* user_data)
 void
 fsm_destroy (fsm_t* this)
 {
-  free(this->user_data);	// Libera la posicion de memoria de player
+  //free(this->user_data);	// Libera la posicion de memoria de player
   free(this);
 }
 
