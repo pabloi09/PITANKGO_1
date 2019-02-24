@@ -7,7 +7,8 @@ EJEMPLO INICIALIZACION PiGPIO:
 https://elinux.org/RPi_GPIO_Code_Samples#pigpio
 TO DO LIST:
 https://gpiozero.readthedocs.io/en/stable/remote_gpio.html
--------------------------------------------------------------------------------------------------------------------------------------------
+
+
 # IDEAS MEJORAS
 -Ponerle una batería y ruedas
 
