@@ -113,6 +113,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
+/*Hebra para teclado ordenador
 PI_THREAD (thread_explora_teclado_PC) {
 //void *thread_explora_teclado_PC(void *arg) {	//Rutina de la hebra explorar teclado
 	int teclaPulsada;
@@ -136,7 +137,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 					printf("\nTecla EMPEZAR pulsada!\n");
 					fflush(stdout);
 					break;
-				/*
+				
 				    case 's':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_NOTA_TIMEOUT;
@@ -145,7 +146,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 					printf("\nTecla SIGUIENTE NOTA pulsada!\n");
 					fflush(stdout);
 					break;
-				*/
+				
 				case 'd':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_IMPACTO;
@@ -154,10 +155,10 @@ PI_THREAD (thread_explora_teclado_PC) {
 					printf("\nTecla MELODIA IMPACTO pulsada!\n");
 					fflush(stdout);
 					break;
-				/* Definir tecla para terminar el juego y que ejecute:
+				* Definir tecla para terminar el juego y que ejecute:
 				 * gpioStopThread(thread_explora_teclado);
 				 * gpioTerminate();
-				 */
+				 *
 				case 'f':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_PLAYER_STOP;
@@ -177,6 +178,33 @@ PI_THREAD (thread_explora_teclado_PC) {
 		piUnlock (STD_IO_BUFFER_KEY);
 	}
 }
+*/
+PI_THREAD (thread_explora_teclado_PC) {
+//void *thread_explora_teclado_PC(void *arg) {	//Rutina de la hebra explorar teclado
+	int teclaPulsada;
+	fsm_trans_t columns[] = {
+		{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
+		{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
+		{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
+		{ KEY_COL_4, CompruebaColumnTimeout, KEY_COL_1, col_1 },
+		{-1, NULL, -1, NULL },
+	};
+	fsm_trans_t keypad[] = {
+		{ KEY_WAITING, key_pressed, KEY_WAITING, process_key},
+		{-1, NULL, -1, NULL },
+	};
+	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
+	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
+
+	while(!flags_system) {
+		fsm_fire (columns_fsm);
+		fsm_fire (keypad_fsm);
+	}
+	fsm_destroy (columns_fsm);
+	fsm_destroy (keypad_fsm);
+}
+
+
 
 
 // wait until next_activation (absolute time)
@@ -205,34 +233,18 @@ int main ()
 		{ WAIT_END, CompruebaNuevaNota, WAIT_NEXT, ComienzaNuevaNota},
 		{-1, NULL, -1, NULL },
 	};
-	fsm_trans_t columns[] = {
-		{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
-		{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
-		{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
-		{ KEY_COL_4, CompruebaColumnTimeout, KEY_COL_1, col_1 },
-		{-1, NULL, -1, NULL },
-	};
-	fsm_trans_t keypad[] = {
-		{ KEY_WAITING, key_pressed, KEY_WAITING, process_key},
-		{-1, NULL, -1, NULL },
-	};
+	
 	//Creacion de las maquinas de estado
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));	// Crea e inicia la maquina de estados
-	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
-	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
 	next = millis();
 	while (!flags_system) {
 		fsm_fire (player_fsm);
-		fsm_fire (columns_fsm);
-		fsm_fire (keypad_fsm);
 		next += CLK_MS;
 		delay_until (next);
 	}
 
 	//gpioStopThread(thread_explora_teclado);
-	fsm_destroy (player_fsm);
-	fsm_destroy (columns_fsm);
-	fsm_destroy (keypad_fsm);	//Libera las maquina de estados
+	fsm_destroy (player_fsm);	//Libera las maquina de estados
 	//gpioTerminate();
 	return 0;
 }

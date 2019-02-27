@@ -124,7 +124,6 @@ void ActualizaPlayer (fsm_t* this) {
 		p_player->duracion_nota_actual=p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
 		p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
 
-
 	} else {
 		piLock (PLAYER_FLAGS_KEY);
 		flags_player |= FLAG_PLAYER_END;	// En el caso de ultima nota activamos el bit de FLAG_PLAYER_END
