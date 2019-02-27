@@ -13,6 +13,9 @@
 #include <pigpio.h>
 #include "piTankGoLib.h"
 #include "tmr.h"
+#include <wiringPi.h>
+#include <string.h>
+#include <softTone.h>
 
 #define MAX_NUM_NOTAS 		2000
 #define MAX_NUM_CHAR_NOMBRE	100

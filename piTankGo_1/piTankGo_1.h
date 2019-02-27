@@ -16,6 +16,7 @@
 #include "kbhit.h" // Para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
 #include "player.h"
 #include "torreta.h"
+#include"teclado.h"
 
 
 

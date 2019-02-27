@@ -1,9 +1,6 @@
 
 #include "player.h"
-#include "tmr.h"
-#include <wiringPi.h>
-#include <string.h>
-#include <softTone.h>
+
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS

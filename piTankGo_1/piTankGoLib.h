@@ -3,6 +3,7 @@
 #define _PITANKGOLIB_H_
 
 #include <stdio.h>
+#include <softTone.h>
 
 #include "fsm.h"
 #include "tmr.h"
@@ -11,7 +12,7 @@
 
 // ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
-#define	DEBOUNCE_TIME	0
+#define	DEBOUNCE_TIME	200
 // DURACION DISPARO IR
 #define SHOOTING_PERIOD 0
 
@@ -20,18 +21,22 @@
 #define	SYSTEM_FLAGS_KEY	1
 #define	PLAYER_FLAGS_KEY	2
 #define	STD_IO_BUFFER_KEY	3
+#define FLAG_KEY 			4
+
+#define FLAG_KEY_PRESSED 1
+#define FLAG_TMR_TIMEOUT 2
 
 // Distribucion de pines GPIO empleada para el teclado
 // ATENCION: Valores a modificar por el alumno
-#define	TECLADO_ROW_1	0
-#define	TECLADO_ROW_2	0
-#define	TECLADO_ROW_3	0
+#define	TECLADO_ROW_1	8
+#define	TECLADO_ROW_2	9
+#define	TECLADO_ROW_3	7
 #define	TECLADO_ROW_4	0
 
-#define	TECLADO_COL_1	0
-#define	TECLADO_COL_2	0
-#define	TECLADO_COL_3	0
-#define	TECLADO_COL_4	0
+#define	TECLADO_COL_1	15
+#define	TECLADO_COL_2	16
+#define	TECLADO_COL_3	4
+#define	TECLADO_COL_4	5
 
 //#define JOY_PIN_UP	0
 //#define JOY_PIN_DOWN	0
@@ -42,11 +47,11 @@
 // Distribucion de pines GPIO empleada para el enlace IR
 // ATENCION: Valores a modificar por el alumno
 #define	IR_TX_PIN		0
-#define	IR_RX_PIN		1
+#define	IR_RX_PIN		0
 
 // Distribucion de pines GPIO empleada para la reproducción de efectos
 // ATENCION: Valores a modificar por el alumno
-#define PLAYER_PWM_PIN 	0
+#define PLAYER_PWM_PIN 	2
 
 // Distribucion de pines GPIO empleada para el control de los servos
 // ATENCION: Valores a modificar por el alumno
@@ -88,19 +93,10 @@ enum interruption_sources {
 
 extern volatile int flags_system;
 extern volatile int flags_player;
-
-extern int frecuenciaDespacito[];
-extern int tiempoDespacito[];
-extern int frecuenciaGOT[];
-extern int tiempoGOT[];
-extern int frecuenciaTetris[];
-extern int tiempoTetris[];
-extern int frecuenciaStarwars[];
-extern int tiempoStarwars[];
-
 extern int frecuenciasDisparo[];
 extern int tiemposDisparo[];
 extern int frecuenciasImpacto[];
 extern int tiemposImpacto[];
+extern static TipoTeclado teclado;
 
 #endif /* _PITANKGOLIB_H_ */
