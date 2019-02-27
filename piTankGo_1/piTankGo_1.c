@@ -88,7 +88,9 @@ int InicializaSistema (TipoSistema *p_sistema) {
 
 	TipoPlayer *player=&(p_sistema->player);
 	printf("\nBIENVENIDO A SU TORRETA SOLDADO\n");
-	printf("a:COMIENZA DISPARO\t s:SIGUIENTE NOTA\t d:START IMPACTO\tf:TERMINAR PROGRAMA\n");
+
+	//printf("a:COMIENZA DISPARO\t s:SIGUIENTE NOTA\t d:START IMPACTO\tf:TERMINAR PROGRAMA\n");
+	printf("C:Disparar\t El resto de teclas saldran por pantalla\n");
 			fflush(stdout);
 	if(InicializaEfecto(&(player->efecto_disparo),nombre_disparo,frecuenciasDisparo,tiemposDisparo,16)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
