@@ -48,7 +48,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 void ConfiguraPins(){
 	//Configura salida sonidos
 	pinMode (PLAYER_PWM_PIN, OUTPUT);
-	softToneCreate(IR_TX_PIN);
+	softToneCreate(PLAYER_PWM_PIN);
 	//Configuramos teclado
 	if(IniciaInOutTeclas()<0){
 		printf ("No se pudo configurar el teclado\n");

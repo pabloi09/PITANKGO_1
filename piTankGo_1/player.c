@@ -88,7 +88,7 @@ void InicializaPlayDisparo (fsm_t* this) {
 	fflush(stdout);
 	piUnlock(STD_IO_BUFFER_KEY);
 
-	softToneWrite (IR_TX_PIN,p_player->frecuencia_nota_actual);
+	softToneWrite (PLAYER_PWM_PIN,p_player->frecuencia_nota_actual);
 	tmr_startms(p_player->tmr_notas,p_player->duracion_nota_actual);
 }
 
@@ -111,7 +111,7 @@ void ComienzaNuevaNota (fsm_t* this) {
 	fflush(stdout);
 	piUnlock(STD_IO_BUFFER_KEY);
 
-	softToneWrite (IR_TX_PIN,p_player->frecuencia_nota_actual);
+	softToneWrite (PLAYER_PWM_PIN,p_player->frecuencia_nota_actual);
 	tmr_startms(p_player->tmr_notas,p_player->duracion_nota_actual);
 }
 
@@ -138,7 +138,7 @@ void FinalEfecto (fsm_t* this) {
 	piUnlock(STD_IO_BUFFER_KEY);
 	TipoPlayer * p_player=this->user_data;
 	InicializaPlayer(p_player);
-	softToneWrite (IR_TX_PIN,0);
+	softToneWrite (PLAYER_PWM_PIN,0);
 }
 
 //------------------------------------------------------
