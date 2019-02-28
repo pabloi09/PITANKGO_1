@@ -1,4 +1,3 @@
-
 #include "piTankGo_1.h"
 
 
@@ -20,10 +19,10 @@ static TipoTeclado teclado;
 //------------------------------------------------------
 
 // int ConfiguracionSistema (TipoSistema *p_sistema): procedimiento de configuracion del sistema.
-// Realizar√°, entra otras, todas las operaciones necesarias para:
-// configurar el uso de posibles librer√≠as (e.g. PiGPIO),
+// Realizar·, entra otras, todas las operaciones necesarias para:
+// configurar el uso de posibles librerÌas (e.g. PiGPIO),
 // configurar las interrupciones externas asociadas a los pines GPIO,
-// configurar las interrupciones peri√≥dicas y sus correspondientes temporizadores,
+// configurar las interrupciones periÛdicas y sus correspondientes temporizadores,
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	piLock(SYSTEM_FLAGS_KEY);
@@ -48,9 +47,9 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 void ConfiguraPins(){
 	//Configura salida sonidos
 	pinMode (PLAYER_PWM_PIN, OUTPUT);
-	softToneCreate(PLAYER_PWM_PIN);
+	softToneCreate(IR_TX_PIN);
 	//Configuramos teclado
-	if(IniciaInOutTeclas()<0){
+	if(IniciaInOutTeclas(&teclado)<0){
 		printf ("No se pudo configurar el teclado\n");
 	};
 
@@ -60,10 +59,10 @@ void ConfiguraPins(){
 
 
 // int InicializaSistema (TipoSistema *p_sistema): procedimiento de inicializacion del sistema.
-// Realizar√°, entra otras, todas las operaciones necesarias para:
+// Realizar·, entra otras, todas las operaciones necesarias para:
 // la inicializacion de los diferentes elementos de los que consta nuestro sistema,
 // la torreta, los efectos, etc.
-// igualmente arrancar√° el thread de exploraci√≥n del teclado del PC
+// igualmente arrancar· el thread de exploraciÛn del teclado del PC
 int InicializaSistema (TipoSistema *p_sistema) {
 	piLock(SYSTEM_FLAGS_KEY);
 	int result = 0;
@@ -83,14 +82,12 @@ int InicializaSistema (TipoSistema *p_sistema) {
 		return -1;
 	}
 
-	char * nombre_disparo="despacito";
-	char * nombre_impacto="starwars";
+	char * nombre_disparo="disparo";
+	char * nombre_impacto="impacto";
 
 	TipoPlayer *player=&(p_sistema->player);
 	printf("\nBIENVENIDO A SU TORRETA SOLDADO\n");
-
-	//printf("a:COMIENZA DISPARO\t s:SIGUIENTE NOTA\t d:START IMPACTO\tf:TERMINAR PROGRAMA\n");
-	printf("C:Disparar\t El resto de teclas saldran por pantalla\n");
+	printf("a:COMIENZA DISPARO\t s:SIGUIENTE NOTA\t d:START IMPACTO\tf:TERMINAR PROGRAMA\n");
 			fflush(stdout);
 	if(InicializaEfecto(&(player->efecto_disparo),nombre_disparo,frecuenciasDisparo,tiemposDisparo,16)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
@@ -119,23 +116,17 @@ int InicializaSistema (TipoSistema *p_sistema) {
 PI_THREAD (thread_explora_teclado_PC) {
 //void *thread_explora_teclado_PC(void *arg) {	//Rutina de la hebra explorar teclado
 	int teclaPulsada;
-
 	while(1) {
 		delay(10); // Wiring Pi function: pauses program execution for at least 10 ms
-
 		piLock (STD_IO_BUFFER_KEY);
-
 		if(kbhit()) {
 			teclaPulsada = kbread();
-
-
 			switch(teclaPulsada) {
 				
 				case 'a':
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_DISPARO;
 					piUnlock (PLAYER_FLAGS_KEY);
-
 					printf("\nTecla EMPEZAR pulsada!\n");
 					fflush(stdout);
 					break;
@@ -144,7 +135,6 @@ PI_THREAD (thread_explora_teclado_PC) {
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_NOTA_TIMEOUT;
 					piUnlock (PLAYER_FLAGS_KEY);
-
 					printf("\nTecla SIGUIENTE NOTA pulsada!\n");
 					fflush(stdout);
 					break;
@@ -153,7 +143,6 @@ PI_THREAD (thread_explora_teclado_PC) {
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_IMPACTO;
 					piUnlock (PLAYER_FLAGS_KEY);
-
 					printf("\nTecla MELODIA IMPACTO pulsada!\n");
 					fflush(stdout);
 					break;
@@ -166,17 +155,14 @@ PI_THREAD (thread_explora_teclado_PC) {
 					flags_player |= FLAG_PLAYER_STOP;
 					flags_system = 1;
 					piUnlock (PLAYER_FLAGS_KEY);
-
 					printf("\nTecla FLAG_PLAYER_STOP pulsada!\n");
 					fflush(stdout);
 					break;
-
 				default:
 					printf("\nINVALID KEY!!!\n");
 					break;
 			}
 		}
-
 		piUnlock (STD_IO_BUFFER_KEY);
 	}
 }
