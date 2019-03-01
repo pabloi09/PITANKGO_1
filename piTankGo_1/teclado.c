@@ -252,16 +252,25 @@ static void process_key (fsm_t* this) {
 	switch(p_teclado->teclaPulsada->col){
         piLock (STD_IO_BUFFER_KEY);
 		case COL_1:
+			printf("\nKeypress \"%c\"...\n",tecladoTL04[teclado->teclaPulsada->row][teclado->teclaPulsada->col]);
+			fflush(stdout);
+			break;
 		case COL_2:
+			printf("\nKeypress \"%c\"...\n",tecladoTL04[teclado->teclaPulsada->row][teclado->teclaPulsada->col]);
+			fflush(stdout);
+			break;
 		case COL_3:
+			printf("\nKeypress \"%c\"...\n",tecladoTL04[teclado->teclaPulsada->row][teclado->teclaPulsada->col]);
+			fflush(stdout);
+			break;
 		case COL_4:
-            		if(tecla==tecladoTL04[1][COL_4]){
+            		if(p_teclado->teclaPulsada->row==ROW_1){
                			 printf("\nPIUM! HAS DISPARADO\n");
                			 piLock (PLAYER_FLAGS_KEY);
 				flags_player |= FLAG_START_DISPARO;
 				piUnlock (PLAYER_FLAGS_KEY);
            		 }else{   
-				printf("\nKeypress \"%c\"...\n",tecla);
+				printf("\nKeypress \"%c\"...\n",tecladoTL04[teclado->teclaPulsada->row][teclado->teclaPulsada->col]);
            		 }
 			fflush(stdout);
 			break;
