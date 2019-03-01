@@ -49,10 +49,11 @@ typedef struct {
 //------------------------------------------------------
 int ConfiguraSistema (TipoSistema *p_sistema);
 int InicializaSistema (TipoSistema *p_sistema);
-
+void ConfiguraPins();
 //------------------------------------------------------
 // FUNCIONES LIGADAS A THREADS ADICIONALES
 //------------------------------------------------------
 PI_THREAD(thread_explora_teclado_PC);
+
 
 #endif /* _PITANKGO_1_H_ */

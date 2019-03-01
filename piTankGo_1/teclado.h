@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <wiringPi.h>
+#include "piTankGoLib.h"
 
 #include "fsm.h"
 #include "tmr.h"
@@ -48,5 +49,20 @@ typedef struct {
 	tmr_t* tmr_duracion_columna;
 	TipoTecla teclaPulsada;
 } TipoTeclado;
+
+//Prototipos
+int IniciaInOutTeclas(TipoTeclado *teclado);
+int CompruebaColumnTimeout (fsm_t* this);
+void row_1_isr (void);
+void row_2_isr (void);
+void row_3_isr (void);
+void row_4_isr (void);
+void col_1 (fsm_t* this);
+void col_2 (fsm_t* this);
+void col_3 (fsm_t* this);
+void col_4 (fsm_t* this);
+int key_pressed (fsm_t* this);
+void process_key (fsm_t* this);
+void timer_duracion_columna_isr (union sigval value);
 
 #endif

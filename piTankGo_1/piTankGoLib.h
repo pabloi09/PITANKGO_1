@@ -13,6 +13,7 @@
 // ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
 #define	DEBOUNCE_TIME	200
+#define COL_REFRESH_TIME 25
 // DURACION DISPARO IR
 #define SHOOTING_PERIOD 0
 
@@ -93,10 +94,9 @@ enum interruption_sources {
 
 extern volatile int flags_system;
 extern volatile int flags_player;
+extern volatile int flags_juego;
 extern int frecuenciasDisparo[];
 extern int tiemposDisparo[];
 extern int frecuenciasImpacto[];
 extern int tiemposImpacto[];
-extern static TipoTeclado teclado;
-
 #endif /* _PITANKGOLIB_H_ */
