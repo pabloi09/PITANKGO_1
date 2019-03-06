@@ -19,19 +19,19 @@ int IniciaInOutTeclas(TipoTeclado *pteclado){
 	p_teclado->teclaPulsada.row = -1;
 
 	pinMode (TECLADO_ROW_1, INPUT);
-	//pullUpDnControl(GPIO_ROW_1, PUD_DOWN);
+	pullUpDnControl(TECLADO_ROW_1, PUD_DOWN);
 	wiringPiISR (TECLADO_ROW_1, INT_EDGE_RISING, row_1_isr);
 
 	pinMode (TECLADO_ROW_2, INPUT);
-	//pullUpDnControl(GPIO_ROW_2, PUD_DOWN);
+	pullUpDnControl(TECLADO_ROW_2, PUD_DOWN);
 	wiringPiISR (TECLADO_ROW_2, INT_EDGE_RISING, row_2_isr);
 
 	pinMode (TECLADO_ROW_3, INPUT);
-	//pullUpDnControl(GPIO_ROW_3, PUD_DOWN);
+	pullUpDnControl(TECLADO_ROW_3, PUD_DOWN);
 	wiringPiISR (TECLADO_ROW_3, INT_EDGE_RISING, row_3_isr);
 
 	pinMode (TECLADO_ROW_4, INPUT);
-	//pullUpDnControl(GPIO_ROW_4, PUD_DOWN);
+	pullUpDnControl(TECLADO_ROW_4, PUD_DOWN);
 	wiringPiISR (TECLADO_ROW_4, INT_EDGE_RISING, row_4_isr);
 
 	pinMode (TECLADO_COL_1, OUTPUT);
