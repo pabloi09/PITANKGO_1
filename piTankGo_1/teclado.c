@@ -56,7 +56,7 @@ int IniciaInOutTeclas(TipoTeclado *pteclado){
 int CompruebaColumnTimeout (fsm_t* this) {
 	int result = 0;
 	piLock (FLAG_KEY);
-	result = (flags_juego & FLAG_TMR_TIMEOUT);
+	result = (flags_teclado & FLAG_TMR_TIMEOUT);
 	piUnlock (FLAG_KEY);
 	return result;
 }
@@ -73,7 +73,7 @@ void row_1_isr (void) {
 	teclado->teclaPulsada.row = ROW_1;
 	teclado->teclaPulsada.col = teclado->columna_actual;
 
-	flags_juego |= FLAG_KEY_PRESSED;
+	flags_teclado |= FLAG_KEY_PRESSED;
 
 	piUnlock (FLAG_KEY);
 
@@ -96,7 +96,7 @@ void row_2_isr (void) {
 	teclado->teclaPulsada.row = ROW_2;
 	teclado->teclaPulsada.col = teclado->columna_actual;
 
-	flags_juego|= FLAG_KEY_PRESSED;
+	flags_teclado|= FLAG_KEY_PRESSED;
 
 	piUnlock (FLAG_KEY);
 
@@ -119,7 +119,7 @@ void row_3_isr (void) {
 	teclado->teclaPulsada.row = ROW_3;
 	teclado->teclaPulsada.col = teclado->columna_actual;
 
-	flags_juego |= FLAG_KEY_PRESSED;
+	flags_teclado |= FLAG_KEY_PRESSED;
 
 	piUnlock (FLAG_KEY);
 
@@ -142,7 +142,7 @@ void row_4_isr (void) {
 	teclado->teclaPulsada.row = ROW_4;
 	teclado->teclaPulsada.col = teclado->columna_actual;
 
-	flags_juego |= FLAG_KEY_PRESSED;
+	flags_teclado |= FLAG_KEY_PRESSED;
 
 	piUnlock (FLAG_KEY);
 
@@ -164,7 +164,7 @@ void col_1 (fsm_t* this) {
 	digitalWrite (TECLADO_COL_2, LOW);
 	digitalWrite (TECLADO_COL_3, LOW);
 
-	flags_juego &= (~FLAG_TMR_TIMEOUT);
+	flags_teclado &= (~FLAG_TMR_TIMEOUT);
 
 	p_teclado->columna_actual = COL_1;
 
@@ -184,7 +184,7 @@ void col_2 (fsm_t* this) {
 	digitalWrite (TECLADO_COL_3, LOW);
 	digitalWrite (TECLADO_COL_4, LOW);
 
-	flags_juego &= (~FLAG_TMR_TIMEOUT);
+	flags_teclado &= (~FLAG_TMR_TIMEOUT);
 
 	p_teclado->columna_actual = COL_2;
 
@@ -204,7 +204,7 @@ void col_3 (fsm_t* this) {
 	digitalWrite (TECLADO_COL_4, LOW);
 	digitalWrite (TECLADO_COL_1, LOW);
 
-	flags_juego &= (~FLAG_TMR_TIMEOUT);
+	flags_teclado &= (~FLAG_TMR_TIMEOUT);
 
 	p_teclado->columna_actual = COL_3;
 
@@ -224,7 +224,7 @@ void col_4 (fsm_t* this) {
 	digitalWrite (TECLADO_COL_1, LOW);
 	digitalWrite (TECLADO_COL_2, LOW);
 
-	flags_juego &= (~FLAG_TMR_TIMEOUT);
+	flags_teclado &= (~FLAG_TMR_TIMEOUT);
 
 	p_teclado->columna_actual = COL_4;
 
@@ -236,7 +236,7 @@ int key_pressed (fsm_t* this) {
 	int result = 0;
 
 	piLock (FLAG_KEY);
-	result = (flags_juego & FLAG_KEY_PRESSED);
+	result = (flags_teclado & FLAG_KEY_PRESSED);
 	piUnlock (FLAG_KEY);
 
 	return result;
@@ -248,7 +248,7 @@ void process_key (fsm_t* this) {
 
 	piLock (FLAG_KEY);
 
-	flags_juego &= (~FLAG_KEY_PRESSED);
+	flags_teclado &= (~FLAG_KEY_PRESSED);
 
 	switch(p_teclado->teclaPulsada.col){
         piLock (STD_IO_BUFFER_KEY);
@@ -256,16 +256,16 @@ void process_key (fsm_t* this) {
 		case COL_2:
 		case COL_3:
 		case COL_4:
-            		if(p_teclado->teclaPulsada.row==ROW_1){
-               			 printf("\nPIUM! HAS DISPARADO\n");
-               			 piLock (PLAYER_FLAGS_KEY);
-				flags_player |= FLAG_START_DISPARO;
-				piUnlock (PLAYER_FLAGS_KEY);
-           		 }else{   
-				printf("\nKeypress \"%c\"...\n",tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
-           		 }
-			fflush(stdout);
-			break;
+            if(p_teclado->teclaPulsada.row==ROW_1){
+               	printf("\nPIUM! HAS DISPARADO\n");
+               	piLock(GAME_FLAGS_KEY);
+               	flags_juego |= FLAG_TRIGGER_BUTTON;
+               	piUnlock (GAME_FLAGS_KEY);
+       		}else{
+    			printf("\nKeypress \"%c\"...\n",tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
+       		}
+         	fflush(stdout);
+            break;
 
 		default:
 			printf("\nERROR!!!! invalid number of column (%d)!!!\n", p_teclado->teclaPulsada.col);
@@ -286,6 +286,6 @@ void process_key (fsm_t* this) {
 
 void timer_duracion_columna_isr (union sigval value) {
 	piLock (FLAG_KEY);
-	flags_juego |= FLAG_TMR_TIMEOUT;
+	flags_teclado |= FLAG_TMR_TIMEOUT;
 	piUnlock (FLAG_KEY);
 }

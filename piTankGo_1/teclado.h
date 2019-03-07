@@ -1,3 +1,10 @@
+/*
+ * teclado.h
+ *
+ *  Created on: 27 de febrero de 2019
+ *      Author: Pablo
+ */
+
 #ifndef _TECLADO_H_
 #define _TECLADO_H_
 
@@ -35,9 +42,6 @@ enum column_state {
 	KEY_COL_4
 };
 
-enum keypad_state {
-	KEY_WAITING
-};
 
 typedef struct {
 	int col;

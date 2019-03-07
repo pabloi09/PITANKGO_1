@@ -3,7 +3,8 @@
 #define _PITANKGOLIB_H_
 
 #include <stdio.h>
-#include <softTone.h>
+#include <stdlib.h>
+#include <wiringPi.h>
 
 #include "fsm.h"
 #include "tmr.h"
@@ -15,7 +16,7 @@
 #define	DEBOUNCE_TIME	200
 #define COL_REFRESH_TIME 25
 // DURACION DISPARO IR
-#define SHOOTING_PERIOD 0
+#define SHOOTING_PERIOD 0			// <-----------------------------------------------------------------------------------------------------
 
 // CLAVES PARA MUTEX
 // ATENCION: Valores a modificar por el alumno
@@ -23,9 +24,7 @@
 #define	PLAYER_FLAGS_KEY	2
 #define	STD_IO_BUFFER_KEY	3
 #define FLAG_KEY 			4
-
-#define FLAG_KEY_PRESSED 1
-#define FLAG_TMR_TIMEOUT 2
+#define GAME_FLAGS_KEY 		5
 
 // Distribucion de pines GPIO empleada para el teclado
 // ATENCION: Valores a modificar por el alumno
@@ -39,6 +38,7 @@
 #define	TECLADO_COL_3	4
 #define	TECLADO_COL_4	5
 
+//Si queremos usar un joystick, definir estos pines como INPUT y valorar prescindir del teclado matricial		// <-----------------------------------------------------------------------------------------------------
 //#define JOY_PIN_UP	0
 //#define JOY_PIN_DOWN	0
 //#define JOY_PIN_LEFT	0
@@ -46,33 +46,38 @@
 //#define JOY_PIN_CENTER 0
 
 // Distribucion de pines GPIO empleada para el enlace IR
-// ATENCION: Valores a modificar por el alumno
-#define	IR_TX_PIN		0
-#define	IR_RX_PIN		0
+// ATENCION: Valores asociados a los diodos
+#define	IR_TX_PIN		0			// <-----------------------------------------------------------------------------------------------------
+#define	IR_RX_PIN		0			// <-----------------------------------------------------------------------------------------------------
 
 // Distribucion de pines GPIO empleada para la reproducción de efectos
-// ATENCION: Valores a modificar por el alumno
+// ATENCION: Valor asociado al pin de salida del reproductor de sonidos
 #define PLAYER_PWM_PIN 	2
 
 // Distribucion de pines GPIO empleada para el control de los servos
-// ATENCION: Valores a modificar por el alumno
-#define	SERVO_VERTICAL_PIN		0
-#define	SERVO_HORIZONTAL_PIN	0
+// ATENCION: Valores asociados a los servo
+#define	SERVO_VERTICAL_PIN		0			// <-----------------------------------------------------------------------------------------------------
+#define	SERVO_HORIZONTAL_PIN	0			// <-----------------------------------------------------------------------------------------------------
+
+// FLAGS FSM CONTROL DE TECLADO
+// ATENCION: Valores a usar por flags_teclado
+#define FLAG_KEY_PRESSED 0x01
+#define FLAG_TMR_TIMEOUT 0x02
 
 // FLAGS FSM CONTROL DE JUEGO Y TORRETA
-// ATENCION: Valores a modificar por el alumno
-#define FLAG_SYSTEM_START 		0x00
-#define FLAG_JOYSTICK_UP 		0x00
-#define FLAG_JOYSTICK_DOWN 		0x00
-#define FLAG_JOYSTICK_LEFT		0x00
-#define FLAG_JOYSTICK_RIGHT		0x00
-#define FLAG_TRIGGER_BUTTON		0x00
-#define FLAG_SHOOT_TIMEOUT		0x00
-#define FLAG_TARGET_DONE		0x00
-#define FLAG_SYSTEM_END			0x00
+// ATENCION: Valores a usar por flags_juego
+#define FLAG_SYSTEM_START 		0x01
+#define FLAG_JOYSTICK_UP 		0x02
+#define FLAG_JOYSTICK_DOWN 		0x04
+#define FLAG_JOYSTICK_LEFT		0x08
+#define FLAG_JOYSTICK_RIGHT		0x10
+#define FLAG_TRIGGER_BUTTON		0x20
+#define FLAG_SHOOT_TIMEOUT		0x40
+#define FLAG_TARGET_DONE		0x80
+#define FLAG_SYSTEM_END			0x100
 
 // FLAGS FSM REPRODUCCION DE EFECTOS DE SONIDO
-// ATENCION: Valores a modificar por el alumno
+// ATENCION: valores a usar por flags_player
 #define FLAG_START_DISPARO 		1
 #define FLAG_START_IMPACTO 		2
 #define FLAG_PLAYER_STOP 		4
@@ -95,6 +100,7 @@ enum interruption_sources {
 extern volatile int flags_system;
 extern volatile int flags_player;
 extern volatile int flags_juego;
+extern volatile int flags_teclado;
 extern int frecuenciasDisparo[];
 extern int tiemposDisparo[];
 extern int frecuenciasImpacto[];
