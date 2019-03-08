@@ -1,14 +1,19 @@
 /*
  * player.h
  *
- *  Created on: 22 de febrero de 2019
- *      Author: Diego y Pablo
+ *  Created on: 21 de enero de 2019
+ *      Author: FFM
  */
 
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <pigpio.h>
 #include "piTankGoLib.h"
+#include "tmr.h"
+#include <wiringPi.h>
 #include <string.h>
 #include <softTone.h>
 
@@ -36,6 +41,7 @@ typedef struct {
 	tmr_t* tmr_notas;
 } TipoPlayer;
 
+extern volatile int flags_player;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
 int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias, int *array_duraciones, int num_notas);
