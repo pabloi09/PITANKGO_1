@@ -11,6 +11,7 @@ pthread_t *thread_explora_teclado=NULL;	//Manejador de hebra que explora teclado
 volatile int flags_juego = 0;
 volatile int flags_system = 0;
 volatile int flags_player = 0;
+volatile int flags_teclado = 0;
 TipoTeclado teclado;
 
 
@@ -27,25 +28,20 @@ TipoTeclado teclado;
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	piLock(SYSTEM_FLAGS_KEY);
 	piLock(STD_IO_BUFFER_KEY);
-		// configura PiGPIO
-		/*if (gpioInitialise() < 0) {
-			printf ("No se pudo configurar PiGPIO\n");
-			piUnlock (STD_IO_BUFFER_KEY);
-			return 1;
-	    }*/
-		// Configurar los pines utilizando las variables definidas en PiTankGoLib.h
-		// ...
+
+	// Configurar los pines utilizando las variables definidas en PiTankGoLib.h
+	// ...
+
 	// configura wiringPi
-			//if (wiringPiSetup () < 0) {
-			if (wiringPiSetupGpio () < 0) {
-				printf ("No se pudo configurar wiringPi\n");
-			}
-	ConfiguraPins();
+	if (wiringPiSetupPhys () < 0) {
+		printf ("No se pudo configurar wiringPi\n");
+	}
+	ConfiguraPins(p_sistema);
 	piUnlock(STD_IO_BUFFER_KEY);
 	piUnlock(SYSTEM_FLAGS_KEY);
 	return 0;
 }
-void ConfiguraPins(){
+void ConfiguraPins(TipoSistema *p_sistema){
 	//Configura salida sonidos
 	pinMode (PLAYER_PWM_PIN, OUTPUT);
 	softToneCreate(PLAYER_PWM_PIN);
@@ -53,7 +49,8 @@ void ConfiguraPins(){
 	if(IniciaInOutTeclas(&teclado)<0){
 		printf ("No se pudo configurar el teclado\n");
 	};
-
+	//Configuramos torreta
+	InicializaTorreta(&(p_sistema->torreta));
 
 }
 
@@ -74,6 +71,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	flags_player=0;
 	flags_juego = 0;
 	flags_system = 0;
+	flags_teclado = 0;
 	piUnlock(PLAYER_FLAGS_KEY);
 	/*if (thread_explora_teclado == NULL) {*/
 	 if (result != 0) {
@@ -87,7 +85,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 
 	TipoPlayer *player=&(p_sistema->player);
 	printf("\nBIENVENIDO A SU TORRETA SOLDADO\n");
-	printf("C:Disparar\t El resto de teclas saldran por pantalla\n");
+	printf("A: Iniciar juego\tC: Disparar\tF: Finalizar juego\n2: Up\t4: Left\t6: Right\t8: Down\n El resto de teclas saldran por pantalla\n");
 			fflush(stdout);
 	if(InicializaEfecto(&(player->efecto_disparo),nombre_disparo,frecuenciasDisparo,tiemposDisparo,16)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
@@ -100,7 +98,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 
 	InicializaPlayer(player);
 	InicializaTorreta(&p_sistema->torreta);
-	//p_sistema->torreta;
+
 	p_sistema->debug=0;	// Modo traza desactivado
 	p_sistema->teclaPulsada = '\0';
 
@@ -196,26 +194,41 @@ int main ()
 		{-1, NULL, -1, NULL },
 	};
 	fsm_trans_t columns[] = {
-			{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
-			{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
-			{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
-			{ KEY_COL_4, CompruebaColumnTimeout, KEY_COL_1, col_1 },
-			{-1, NULL, -1, NULL },
-		};
-		fsm_trans_t keypad[] = {
-			{ KEY_WAITING, key_pressed, KEY_WAITING, process_key},
-			{-1, NULL, -1, NULL },
-		};
+		{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
+		{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
+		{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
+		{ KEY_COL_4, CompruebaColumnTimeout, KEY_COL_1, col_1 },
+		{-1, NULL, -1, NULL },
+	};
+	fsm_trans_t keypad[] = {
+		{ WAIT_KEY, key_pressed, WAIT_KEY, process_key},
+		{-1, NULL, -1, NULL },
+	};
+	fsm_trans_t torreta[] = {
+		{ WAIT_START, CompruebaComienzo, WAIT_MOVE, ComienzaSistema },
+		{ WAIT_MOVE, CompruebaJoystickUp, WAIT_MOVE, MueveTorretaArriba },
+		{ WAIT_MOVE, CompruebaJoystickDown, WAIT_MOVE, MueveTorretaAbajo },
+		{ WAIT_MOVE, CompruebaJoystickLeft, WAIT_MOVE, MueveTorretaIzquierda },
+		{ WAIT_MOVE, CompruebaJoystickRight, WAIT_MOVE, MueveTorretaDerecha },
+		{ WAIT_MOVE, CompruebaTriggerButton, TRIGGER_BUTTON, DisparoIR },
+		{ TRIGGER_BUTTON, CompruebaTimeoutDisparo, WAIT_MOVE, FinalDisparoIR },
+		{ TRIGGER_BUTTON, CompruebaImpacto, WAIT_MOVE, ImpactoDetectado },
+		{ WAIT_MOVE, CompruebaFinalJuego, WAIT_END, FinalizaJuego },
+		{-1, NULL, -1, NULL },
+	};
 	
 	//Creacion de las maquinas de estado
-	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));	// Crea e inicia la maquina de estados
+	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
 	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
-	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
+	fsm_t* keypad_fsm = fsm_new (WAIT_KEY, keypad, &teclado);
+	fsm_t* torreta_fsm = fsm_new (WAIT_START, torreta, &(sistema.torreta));
+
 	next = millis();
 	while (!flags_system) {
 		fsm_fire (player_fsm);
 		fsm_fire (columns_fsm);
 		fsm_fire (keypad_fsm);
+		fsm_fire (torreta_fsm);
 		next += CLK_MS;
 		delay_until (next);
 	}
@@ -224,6 +237,10 @@ int main ()
 	fsm_destroy(player_fsm);	//Libera las maquina de estados
 	fsm_destroy(columns_fsm);
 	fsm_destroy(keypad_fsm);
+	fsm_destroy(torreta_fsm);
+	tmr_destroy(teclado.tmr_duracion_columna);		//Libera los timer
+	tmr_destroy(sistema.player.tmr_notas);
+	tmr_destroy(sistema.torreta.tmr_shoot);
 	//gpioTerminate();
 	return 0;
 }

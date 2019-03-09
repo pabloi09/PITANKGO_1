@@ -1,18 +1,23 @@
 /*
  * torreta.h
  *
- *  Created on: 21 de enero de 2019
- *      Author: FFM
+ *  Created on: 7 de marzo de 2019
+ *      Author: Diego
  */
 
 #ifndef _TORRETA_H_
 #define _TORRETA_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <wiringPi.h>
-
+#include <softPwm.h>
 #include "piTankGoLib.h"
+
+//Parametros del PWM: 1)num de intervalos de 100us en el ciclo del PWM		2)num de intervalos incrementados
+//3)PWM minimo		4)PWM maximo
+#define SERVO_PWM_RANGE		400
+#define SERVO_INCREMENTO	1
+#define SERVO_MINIMO		9
+#define SERVO_MAXIMO		22
+
 
 typedef struct {
 	int inicio; // Valor correspondiente a la posicion inicial del servo
@@ -32,13 +37,16 @@ typedef struct {
 	TipoServo servo_y;
 
 	// A completar por el alumno (declaracion del temporizador para control duracion disparo)
-	// ...
+	tmr_t* tmr_shoot;
 } TipoTorreta;
 
-extern volatile int flags_juego;
+
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
 void InicializaTorreta (TipoTorreta *p_torreta);
+
+// Prototipos de funciones de interrupcion
+void impacto_isr (void);
 
 // Prototipos de funciones de entrada
 int CompruebaComienzo (fsm_t* this);
@@ -63,10 +71,7 @@ void ImpactoDetectado (fsm_t* this);
 void FinalizaJuego (fsm_t* this);
 
 // Prototipos de procedimientos de atencion a las interrupciones
-//	COMPLETAR POR EL ALUMNO:
-/*
-static void timer_duracion_disparo_isr (union sigval value);
+void timer_duracion_disparo_isr (union sigval value);
 
-*/
 
 #endif /* _TORRETA_H_ */
