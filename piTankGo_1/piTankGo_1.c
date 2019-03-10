@@ -36,7 +36,8 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 		// Configurar los pines utilizando las variables definidas en PiTankGoLib.h
 		// ...
 	// configura wiringPi
-			if (wiringPiSetup () < 0) {
+			//if (wiringPiSetup () < 0) {
+			if (wiringPiSetupGpio () < 0) {
 				printf ("No se pudo configurar wiringPi\n");
 			}
 	ConfiguraPins();
