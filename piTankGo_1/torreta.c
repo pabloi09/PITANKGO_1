@@ -123,12 +123,13 @@ void ComienzaSistema (fsm_t* this) {
 	if(p_torreta->posicion.y > p_torreta->servo_y.maximo)
 		p_torreta->posicion.y = p_torreta->servo_y.maximo;
 
-	if(p_torreta->posicion.x > p_torreta->servo_x.minimo)
+	if(p_torreta->posicion.x < p_torreta->servo_x.minimo)
 		p_torreta->posicion.x = p_torreta->servo_x.minimo;
-	if(p_torreta->posicion.y > p_torreta->servo_y.minimo)
+	if(p_torreta->posicion.y < p_torreta->servo_y.minimo)
 		p_torreta->posicion.y = p_torreta->servo_y.minimo;
 
 	p_torreta->tmr_shoot=tmr_new(timer_duracion_disparo_isr);	// creamos el temporizador asociado al timeout del disparo
+	InicializaTorreta(p_torreta);
 }
 
 void MueveTorretaArriba (fsm_t* this) {
@@ -136,15 +137,15 @@ void MueveTorretaArriba (fsm_t* this) {
 	p_torreta = (TipoTorreta*)(this->user_data);
 
 	piLock(GAME_FLAGS_KEY);
-	flags_juego &= (~FLAG_JOYSTICK_LEFT);
+	flags_juego &= (~FLAG_JOYSTICK_UP);
 	piUnlock (GAME_FLAGS_KEY);
 
-	if(p_torreta->posicion.y + p_torreta->servo_y.incremento >= p_torreta->servo_y.minimo) {
+	if(p_torreta->posicion.y + p_torreta->servo_y.incremento <= p_torreta->servo_y.maximo) {
 		p_torreta->posicion.y = p_torreta->posicion.y + p_torreta->servo_y.incremento;
 
 		softPwmWrite(SERVO_VERTICAL_PIN, p_torreta->posicion.y);
 
-		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.y);
+		printf("[SERVO_Y][POSICION]=[%d]\n", p_torreta->posicion.y);
 		fflush(stdout);
 	}
 }
@@ -162,7 +163,7 @@ void MueveTorretaAbajo (fsm_t* this) {
 
 		softPwmWrite(SERVO_VERTICAL_PIN, p_torreta->posicion.y);
 
-		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.y);
+		printf("[SERVO_Y][POSICION]=[%d]\n", p_torreta->posicion.y);
 		fflush(stdout);
 	}
 }
@@ -180,7 +181,7 @@ void MueveTorretaIzquierda (fsm_t* this) {
 
 		softPwmWrite(SERVO_HORIZONTAL_PIN, p_torreta->posicion.x);
 
-		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.x);
+		printf("[SERVO_X][POSICION]=[%d]\n", p_torreta->posicion.x);
 		fflush(stdout);
 	}
 }
@@ -193,12 +194,12 @@ void MueveTorretaDerecha (fsm_t* this) {
 	flags_juego &= (~FLAG_JOYSTICK_RIGHT);
 	piUnlock (GAME_FLAGS_KEY);
 
-	if(p_torreta->posicion.x - p_torreta->servo_x.incremento >= p_torreta->servo_x.minimo) {
-		p_torreta->posicion.x = p_torreta->posicion.x - p_torreta->servo_x.incremento;
+	if(p_torreta->posicion.x + p_torreta->servo_x.incremento <= p_torreta->servo_x.maximo) {
+		p_torreta->posicion.x = p_torreta->posicion.x + p_torreta->servo_x.incremento;
 
 		softPwmWrite(SERVO_HORIZONTAL_PIN, p_torreta->posicion.x);
 
-		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.x);
+		printf("[SERVO_X][POSICION]=[%d]\n", p_torreta->posicion.x);
 		fflush(stdout);
 	}
 }
@@ -245,6 +246,7 @@ void FinalizaJuego (fsm_t* this) {
 	p_torreta = (TipoTorreta*)(this->user_data);
 
 	piLock(GAME_FLAGS_KEY);
+	flags_juego &= (~FLAG_SYSTEM_START);
 	flags_juego &= (~FLAG_SYSTEM_END);
 	piUnlock (GAME_FLAGS_KEY);
 
@@ -273,4 +275,6 @@ void timer_duracion_disparo_isr (union sigval value) {
 	piLock(GAME_FLAGS_KEY);
 	flags_juego |= FLAG_SHOOT_TIMEOUT;
 	piUnlock (GAME_FLAGS_KEY);
+	printf("\nHas fallado el disparo\n");
+	fflush(stdout);
 }

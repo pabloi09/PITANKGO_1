@@ -42,8 +42,8 @@ typedef struct {
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
 //------------------------------------------------------
-int ConfiguraSistema (TipoSistema *p_sistema);
-int InicializaSistema (TipoSistema *p_sistema);
+void ConfiguraSistema (TipoSistema *p_sistema);
+void InicializaSistema (TipoSistema *p_sistema);
 void ConfiguraPins();
 //------------------------------------------------------
 // FUNCIONES LIGADAS A THREADS ADICIONALES

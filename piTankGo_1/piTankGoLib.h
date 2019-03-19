@@ -14,7 +14,7 @@
 // ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
 #define	DEBOUNCE_TIME	200
-#define COL_REFRESH_TIME 25
+#define COL_REFRESH_TIME 45
 // DURACION DISPARO IR
 #define SHOOTING_PERIOD 1000		// <-----------------------------------------------------------------------------------------------------
 

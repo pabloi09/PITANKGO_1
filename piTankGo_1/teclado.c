@@ -3,10 +3,10 @@
 int debounceTime[NUM_ROWS] = {0,0,0,0}; // Timeout to avoid bouncing after pin event
 
 char tecladoTL04[4][4] = {
-	{'1', '2', '3', 'C'},
-	{'4', '5', '6', 'D'},
-	{'7', '8', '9', 'E'},
-	{'A', '0', 'B', 'F'}
+	{'1', '2', '3', 'A'},
+	{'4', '5', '6', 'B'},
+	{'7', '8', '9', 'C'},
+	{'*', '0', '#', 'D'}
 };
 static TipoTeclado* teclado;
 
@@ -35,16 +35,12 @@ int IniciaInOutTeclas(TipoTeclado *pteclado){
 	wiringPiISR (TECLADO_ROW_4, INT_EDGE_RISING, row_4_isr);
 
 	pinMode (TECLADO_COL_1, OUTPUT);
-	digitalWrite (TECLADO_COL_1, LOW);
 
 	pinMode (TECLADO_COL_2, OUTPUT);
-	digitalWrite (TECLADO_COL_2, LOW);
 
 	pinMode (TECLADO_COL_3, OUTPUT);
-	digitalWrite (TECLADO_COL_3, LOW);
 
 	pinMode (TECLADO_COL_4, OUTPUT);
-	digitalWrite (TECLADO_COL_4, LOW);
 
 	p_teclado->tmr_duracion_columna = tmr_new (timer_duracion_columna_isr);
 	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna), COL_REFRESH_TIME);
@@ -128,6 +124,7 @@ void row_3_isr (void) {
 	}
 
 	debounceTime[ROW_3] = millis () + DEBOUNCE_TIME ;
+	debounceTime[ROW_4] = millis () + DEBOUNCE_TIME ;
 }
 
 void row_4_isr (void) {
@@ -253,7 +250,7 @@ void process_key (fsm_t* this) {
 	switch(p_teclado->teclaPulsada.col){
         piLock (STD_IO_BUFFER_KEY);
 		case COL_1:
-			if(p_teclado->teclaPulsada.row==ROW_4){
+			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_SYSTEM_START;
 				piUnlock (GAME_FLAGS_KEY);
@@ -261,6 +258,10 @@ void process_key (fsm_t* this) {
 				fflush(stdout);
 				p_teclado->teclaPulsada.row = -1;
 				p_teclado->teclaPulsada.col = -1;
+				break;
+			}else if(!(flags_juego & FLAG_SYSTEM_START)){
+				printf("\nPulse * para comenzar el juego\n");
+				fflush(stdout);
 				break;
 			}else if(p_teclado->teclaPulsada.row==ROW_2){
 				piLock(GAME_FLAGS_KEY);
@@ -277,7 +278,12 @@ void process_key (fsm_t* this) {
 				break;
 			}
 		case COL_2:
-			if(p_teclado->teclaPulsada.row==ROW_1){
+			if(!(flags_juego & FLAG_SYSTEM_START)){
+				printf("\nPulse * para comenzar el juego\n");
+				fflush(stdout);
+				break;
+			}
+			else if(p_teclado->teclaPulsada.row==ROW_1){
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_JOYSTICK_UP;
 				piUnlock (GAME_FLAGS_KEY);
@@ -299,7 +305,12 @@ void process_key (fsm_t* this) {
 				break;
 			}
 		case COL_3:
-			if(p_teclado->teclaPulsada.row==ROW_2){
+			if(!(flags_juego & FLAG_SYSTEM_START)){
+				printf("\nPulse * para comenzar el juego\n");
+				fflush(stdout);
+				break;
+			}
+			else if(p_teclado->teclaPulsada.row==ROW_2){
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_JOYSTICK_RIGHT;
 				piUnlock (GAME_FLAGS_KEY);
@@ -314,7 +325,12 @@ void process_key (fsm_t* this) {
 				break;
 			}
 		case COL_4:
-            if(p_teclado->teclaPulsada.row==ROW_1){
+			if(!(flags_juego & FLAG_SYSTEM_START)){
+				printf("\nPulse * para comenzar el juego\n");
+				fflush(stdout);
+				break;
+			}
+			else if(p_teclado->teclaPulsada.row==ROW_1){
                	printf("\nPIUM! HAS DISPARADO\n");
                	piLock(GAME_FLAGS_KEY);
                	flags_juego |= FLAG_TRIGGER_BUTTON;
@@ -346,6 +362,7 @@ void process_key (fsm_t* this) {
         
 			break;
 	}
+
 	piUnlock (STD_IO_BUFFER_KEY);
 	piUnlock (FLAG_KEY);
 
