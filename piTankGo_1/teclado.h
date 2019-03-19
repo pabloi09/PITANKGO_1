@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 #include "piTankGoLib.h"
+#include <softTone.h>
 
 #include "fsm.h"
 #include "tmr.h"

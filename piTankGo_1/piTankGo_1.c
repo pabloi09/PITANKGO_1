@@ -5,6 +5,8 @@ int frecuenciasDisparo[16] = {2500,2400,2300,2200,2100,2000,1900,1800,1700,1600,
 int tiemposDisparo[16] = {75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75};
 int frecuenciasImpacto[32] = {97,109,79,121,80,127,123,75,119,96,71,101,98,113,92,70,114,75,86,103,126,118,128,77,114,119,72};
 int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
+int frecuenciasFondo[48] = {860,0,860,1308,0,1173,1285,1451,1285,0,860,0,860,1308,0,1173,1095,972,742,0,860,0,860,1308,0,1173,1285,1451,1285,0,860,0,860,1308,0,1138,1095,860,0,742,0,860,0,590,0,742,860,0,};
+int tiemposFondo[48] = {175,50,175,1000,150,150,150,150,1000,300,175,50,175,1000,150,150,150,150,1000,300,175,50,175,1000,150,150,150,150,1000,300,175,50,175,1000,150,200,150,1000,500,150,50,350,75,150,75,150,100,2000};
 
 pthread_t *thread_explora_teclado=NULL;	//Manejador de hebra que explora teclado
 
@@ -76,6 +78,10 @@ void InicializaSistema (TipoSistema *p_sistema) {
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
 		fflush(stdout);
 	}
+	if(InicializaEfecto(&(player->efecto_melodia),"melodia",frecuenciasFondo,tiemposFondo,48)<1){
+		printf("\n[ERROR!!!][InicializaMelodia]\n");
+		fflush(stdout);
+	}
 
 	InicializaPlayer(player);
 	InicializaTorreta(&p_sistema->torreta);
@@ -107,6 +113,10 @@ int main ()
 	InicializaSistema (&sistema);
 
 	fsm_trans_t reproductor[] = {
+		{ WAIT_END_MELODIA, CompruebaFinalEfecto, MELODIA_INICIO, IniciaMelodia },
+		{ WAIT_END_MELODIA, CompruebaNuevaNota, MELODIA_INICIO, ComienzaNuevaNota},
+		{ MELODIA_INICIO, CompruebaNotaTimeout, WAIT_END_MELODIA, ActualizaPlayer },
+		{ MELODIA_INICIO, CompruebaStartGame, WAIT_START, SilenciaMelodia },
 		{ WAIT_START, CompruebaStartDisparo, WAIT_NEXT, InicializaPlayDisparo },
 		{ WAIT_START, CompruebaStartImpacto, WAIT_NEXT, InicializaPlayImpacto },
 		{ WAIT_NEXT, CompruebaStartImpacto, WAIT_NEXT, InicializaPlayImpacto },
@@ -140,10 +150,12 @@ int main ()
 	};
 	
 	//Creacion de las maquinas de estado
-	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
+	fsm_t* player_fsm = fsm_new (MELODIA_INICIO, reproductor, &(sistema.player));
 	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
 	fsm_t* keypad_fsm = fsm_new (WAIT_KEY, keypad, &teclado);
 	fsm_t* torreta_fsm = fsm_new (WAIT_START, torreta, &(sistema.torreta));
+
+	IniciaMelodia (player_fsm);
 
 	next = millis();
 	while (!flags_system) {

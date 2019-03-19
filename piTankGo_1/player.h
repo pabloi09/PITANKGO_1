@@ -31,6 +31,7 @@ typedef struct {
 
 	TipoEfecto efecto_disparo; // Efecto de disparo
 	TipoEfecto efecto_impacto; // Efecto de impacto
+	TipoEfecto efecto_melodia;
 
 	// A completar por el alumno (declaracion del temporizador para control duracion notas)
 	tmr_t* tmr_notas;
@@ -42,6 +43,7 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 void InicializaPlayer (TipoPlayer *p_player);
 
 // Prototipos de funciones de entrada
+int CompruebaStartGame (fsm_t* this);
 int CompruebaStartDisparo (fsm_t* this);
 int CompruebaStartImpacto (fsm_t* this);
 int CompruebaNuevaNota (fsm_t* this);
@@ -49,6 +51,8 @@ int CompruebaNotaTimeout (fsm_t* this);
 int CompruebaFinalEfecto (fsm_t* this);
 
 // Prototipos de funciones de salida
+void IniciaMelodia (fsm_t* this);
+void SilenciaMelodia (fsm_t* this);
 void InicializaPlayDisparo (fsm_t* this);
 void InicializaPlayImpacto (fsm_t* this);
 void ComienzaNuevaNota (fsm_t* this);

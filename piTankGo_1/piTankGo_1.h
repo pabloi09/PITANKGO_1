@@ -19,6 +19,8 @@
 
 // Posibles estados de las FSMs
 enum fsm_state {
+	WAIT_END_MELODIA,
+	MELODIA_INICIO,
 	WAIT_START,
 	WAIT_KEY,
 	WAIT_PUSH,

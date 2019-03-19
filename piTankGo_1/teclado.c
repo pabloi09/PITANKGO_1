@@ -250,6 +250,9 @@ void process_key (fsm_t* this) {
 	switch(p_teclado->teclaPulsada.col){
         piLock (STD_IO_BUFFER_KEY);
 		case COL_1:
+			softToneWrite (PLAYER_PWM_PIN,984);
+			delay(100);
+			softToneWrite (PLAYER_PWM_PIN,0);
 			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_SYSTEM_START;
@@ -278,6 +281,9 @@ void process_key (fsm_t* this) {
 				break;
 			}
 		case COL_2:
+			softToneWrite (PLAYER_PWM_PIN,792);
+			delay(100);
+			softToneWrite (PLAYER_PWM_PIN,0);
 			if(!(flags_juego & FLAG_SYSTEM_START)){
 				printf("\nPulse * para comenzar el juego\n");
 				fflush(stdout);
@@ -305,6 +311,9 @@ void process_key (fsm_t* this) {
 				break;
 			}
 		case COL_3:
+			softToneWrite (PLAYER_PWM_PIN,882);
+			delay(100);
+			softToneWrite (PLAYER_PWM_PIN,0);
 			if(!(flags_juego & FLAG_SYSTEM_START)){
 				printf("\nPulse * para comenzar el juego\n");
 				fflush(stdout);
@@ -325,6 +334,9 @@ void process_key (fsm_t* this) {
 				break;
 			}
 		case COL_4:
+			softToneWrite (PLAYER_PWM_PIN,1526);
+			delay(100);
+			softToneWrite (PLAYER_PWM_PIN,0);
 			if(!(flags_juego & FLAG_SYSTEM_START)){
 				printf("\nPulse * para comenzar el juego\n");
 				fflush(stdout);
@@ -365,6 +377,7 @@ void process_key (fsm_t* this) {
 
 	piUnlock (STD_IO_BUFFER_KEY);
 	piUnlock (FLAG_KEY);
+
 
 }
 
