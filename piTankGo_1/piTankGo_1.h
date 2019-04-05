@@ -2,18 +2,14 @@
  * piTankGo_1.h
  *
  *  Created on: 11 de enero de 2019
- *      Author: FFM
+ *      Author: Pablo y Diego
  */
 
 #ifndef _PITANKGO_1_H_
 #define _PITANKGO_1_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pigpio.h> //Incluimos pigpio
-#include <wiringPi.h>
-
-#include "kbhit.h" // Para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
+//#include "kbhit.h" // Para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
+#include "piTankGoLib.h"
 #include "player.h"
 #include "torreta.h"
 #include"teclado.h"
@@ -21,9 +17,10 @@
 
 
 
-
 // Posibles estados de las FSMs
 enum fsm_state {
+	WAIT_END_MELODIA,
+	MELODIA_INICIO,
 	WAIT_START,
 	WAIT_KEY,
 	WAIT_PUSH,
@@ -47,8 +44,8 @@ typedef struct {
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
 //------------------------------------------------------
-int ConfiguraSistema (TipoSistema *p_sistema);
-int InicializaSistema (TipoSistema *p_sistema);
+void ConfiguraSistema (TipoSistema *p_sistema);
+void InicializaSistema (TipoSistema *p_sistema);
 void ConfiguraPins();
 //------------------------------------------------------
 // FUNCIONES LIGADAS A THREADS ADICIONALES

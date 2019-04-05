@@ -22,11 +22,35 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 void InicializaPlayer (TipoPlayer *p_player) {
 	p_player->posicion_nota_actual=0;
 	p_player->tmr_notas=tmr_new(timer_player_duracion_nota_actual_isr);	// creamos el temporizador asociado al timeout de las notas
+
+}
+
+void IniciaMelodia (fsm_t* this) {
+	TipoPlayer * p_player=this->user_data;
+	//delay(1000);
+	FinalEfecto(this);
+
+	//Inicio melodia de fondo
+	p_player->p_efecto=&(p_player->efecto_melodia);
+	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[0];
+	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[0];
+
+	softToneWrite (PLAYER_PWM_PIN,p_player->frecuencia_nota_actual);
+	tmr_startms(p_player->tmr_notas,p_player->duracion_nota_actual);
 }
 
 //------------------------------------------------------
 // FUNCIONES DE ENTRADA O DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
+int CompruebaStartGame (fsm_t* this) {
+	int result = 0;
+	piLock (GAME_FLAGS_KEY);
+	result=flags_juego & FLAG_SYSTEM_START;
+	flags_player &= ~FLAG_START_DISPARO;
+	piUnlock (GAME_FLAGS_KEY);
+	return result;
+}
+
 int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 	piLock (SYSTEM_FLAGS_KEY);
@@ -77,16 +101,16 @@ int CompruebaFinalEfecto (fsm_t* this) {
 // FUNCIONES DE SALIDA O DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
+void SilenciaMelodia (fsm_t* this) {
+	FinalEfecto(this);
+}
+
 void InicializaPlayDisparo (fsm_t* this) {
 	TipoPlayer * p_player=this->user_data;
 	p_player->p_efecto=&(p_player->efecto_disparo);
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[0];
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[0];
 	p_player->posicion_nota_actual=0;
-	piLock(STD_IO_BUFFER_KEY);
-	printf ("Has disparado\nFrecuencias disparo:\n%d Hz\n",p_player->frecuencia_nota_actual);
-	fflush(stdout);
-	piUnlock(STD_IO_BUFFER_KEY);
 
 	softToneWrite (PLAYER_PWM_PIN,p_player->frecuencia_nota_actual);
 	tmr_startms(p_player->tmr_notas,p_player->duracion_nota_actual);
@@ -98,18 +122,11 @@ void InicializaPlayImpacto (fsm_t* this) {
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[0];
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[0];
 	p_player->posicion_nota_actual=0;
-	piLock(STD_IO_BUFFER_KEY);
-	printf ("Frecuencias impacto:\n%d\n",p_player->frecuencia_nota_actual);
-	fflush(stdout);
-	piUnlock(STD_IO_BUFFER_KEY);
+
 }
 
 void ComienzaNuevaNota (fsm_t* this) {
 	TipoPlayer * p_player=this->user_data;
-	piLock(STD_IO_BUFFER_KEY);
-	printf ("%d\n",p_player->frecuencia_nota_actual);
-	fflush(stdout);
-	piUnlock(STD_IO_BUFFER_KEY);
 
 	softToneWrite (PLAYER_PWM_PIN,p_player->frecuencia_nota_actual);
 	tmr_startms(p_player->tmr_notas,p_player->duracion_nota_actual);
@@ -132,12 +149,9 @@ void ActualizaPlayer (fsm_t* this) {
 }
 
 void FinalEfecto (fsm_t* this) {
-	piLock(STD_IO_BUFFER_KEY);
-	printf("\nDisparo terminado\n");
-	fflush(stdout);
-	piUnlock(STD_IO_BUFFER_KEY);
+
 	TipoPlayer * p_player=this->user_data;
-	InicializaPlayer(p_player);
+	p_player->posicion_nota_actual=0;
 	softToneWrite (PLAYER_PWM_PIN,0);
 }
 
