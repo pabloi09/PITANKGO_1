@@ -10,12 +10,13 @@
 
 #include <softPwm.h>
 #include "piTankGoLib.h"
+#include "SerialReader.h"
+#include <pthread.h>
 
 //Parametros del PWM: 1)num de intervalos de 100us en el ciclo del PWM		2)num de intervalos incrementados
 //3)PWM minimo		4)PWM maximo
 #define SERVO_PWM_RANGE		400
-#define SERVO_Y_INCREMENTO	1
-#define SERVO_X_INCREMENTO	2
+#define SERVO_INCREMENTO	1
 #define SERVO_MINIMO		9
 #define SERVO_MAXIMO		22
 
