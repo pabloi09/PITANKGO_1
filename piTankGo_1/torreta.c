@@ -2,6 +2,8 @@
 #include "torreta.h"
 #include <softPWM.h>
 
+int marcador=0;
+
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
 //------------------------------------------------------
@@ -242,11 +244,15 @@ void ImpactoDetectado (fsm_t* this) {
 	piLock (PLAYER_FLAGS_KEY);
 	flags_player |= FLAG_START_IMPACTO;
 	piUnlock (PLAYER_FLAGS_KEY);
+
+	marcador=1;
 }
 
 void FinalizaJuego (fsm_t* this) {
 	TipoTorreta *p_torreta;
 	p_torreta = (TipoTorreta*)(this->user_data);
+
+	marcador=2;
 
 	piLock(GAME_FLAGS_KEY);
 	flags_juego &= (~FLAG_SYSTEM_START);

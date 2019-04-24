@@ -1,5 +1,6 @@
 #include "teclado.h"
 
+
 int debounceTime[NUM_ROWS] = {0,0,0,0}; // Timeout to avoid bouncing after pin event
 
 char tecladoTL04[4][4] = {
@@ -254,6 +255,7 @@ void process_key (fsm_t* this) {
 			delay(100);
 			softToneWrite (PLAYER_PWM_PIN,0);
 			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){
+				marcador=1;
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_SYSTEM_START;
 				piUnlock (GAME_FLAGS_KEY);
@@ -354,12 +356,6 @@ void process_key (fsm_t* this) {
 				piLock(GAME_FLAGS_KEY);
 				flags_juego |= FLAG_SYSTEM_END;
 				piUnlock (GAME_FLAGS_KEY);
-				p_teclado->teclaPulsada.row = -1;
-				p_teclado->teclaPulsada.col = -1;
-				break;
-			}else if(p_teclado->teclaPulsada.row==ROW_2){
-				printf("A: Disparar\tD: Finalizar juego\n2: Up\t4: Left\t6: Right\t8: Down\nEl resto de teclas saldran por pantalla\n");
-				fflush(stdout);
 				p_teclado->teclaPulsada.row = -1;
 				p_teclado->teclaPulsada.col = -1;
 				break;

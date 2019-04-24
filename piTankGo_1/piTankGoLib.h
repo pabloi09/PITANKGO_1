@@ -16,7 +16,7 @@
 #define	DEBOUNCE_TIME	200
 #define COL_REFRESH_TIME 45
 // DURACION DISPARO IR
-#define SHOOTING_PERIOD 500		// <-----------------------------------------------------------------------------------------------------
+#define SHOOTING_PERIOD 1000		// <-----------------------------------------------------------------------------------------------------
 
 // CLAVES PARA MUTEX
 // ATENCION: Valores a modificar por el alumno
@@ -84,6 +84,7 @@
 #define FLAG_PLAYER_END			8
 #define FLAG_NOTA_TIMEOUT		16
 
+
 enum interruption_sources {
 	TARGET_ISR,
 	TECLADO_FILA_1,
@@ -101,6 +102,7 @@ extern volatile int flags_system;
 extern volatile int flags_player;
 extern volatile int flags_juego;
 extern volatile int flags_teclado;
+extern int marcador;
 extern int frecuenciasDisparo[];
 extern int tiemposDisparo[];
 extern int frecuenciasImpacto[];
