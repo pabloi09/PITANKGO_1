@@ -251,11 +251,11 @@ void process_key (fsm_t* this) {
 	switch(p_teclado->teclaPulsada.col){
         piLock (STD_IO_BUFFER_KEY);
 		case COL_1:
-			softToneWrite (PLAYER_PWM_PIN,984);
+			softToneWrite (PLAYER_PWM_PIN,984);	//	Sonido tecla
 			delay(100);
-			softToneWrite (PLAYER_PWM_PIN,0);
-			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){
-				marcador=1;
+			softToneWrite (PLAYER_PWM_PIN,0);	// Terminar sonido tecla
+			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){	// Cuando pulsamos * y el juego aún no ha comenzado
+				marcador=1;		//Indica al Arduino que ponga a 0 el marcador
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_SYSTEM_START;
 				piUnlock (GAME_FLAGS_KEY);

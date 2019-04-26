@@ -27,7 +27,6 @@ void InicializaPlayer (TipoPlayer *p_player) {
 
 void IniciaMelodia (fsm_t* this) {
 	TipoPlayer * p_player=this->user_data;
-	//delay(1000);
 	FinalEfecto(this);
 
 	//Inicio melodia de fondo

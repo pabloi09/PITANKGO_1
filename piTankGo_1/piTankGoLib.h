@@ -11,7 +11,6 @@
 
 #define CLK_MS 10 // PERIODO DE ACTUALIZACION DE LA MAQUINA ESTADOS EN MILISEGUNDOS
 
-// ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
 #define	DEBOUNCE_TIME	200
 #define COL_REFRESH_TIME 45
@@ -19,7 +18,6 @@
 #define SHOOTING_PERIOD 1000		// <-----------------------------------------------------------------------------------------------------
 
 // CLAVES PARA MUTEX
-// ATENCION: Valores a modificar por el alumno
 #define	SYSTEM_FLAGS_KEY	1
 #define	PLAYER_FLAGS_KEY	2
 #define	STD_IO_BUFFER_KEY	3
@@ -27,7 +25,6 @@
 #define GAME_FLAGS_KEY 		5
 
 // Distribucion de pines GPIO empleada para el teclado
-// ATENCION: Valores a modificar por el alumno
 #define	TECLADO_ROW_1	16
 #define	TECLADO_ROW_2	18
 #define	TECLADO_ROW_3	22
@@ -38,19 +35,13 @@
 #define	TECLADO_COL_3	15
 #define	TECLADO_COL_4	19
 
-//Si queremos usar un joystick, definir estos pines como INPUT y valorar prescindir del teclado matricial		// <-----------------------------------------------------------------------------------------------------
-//#define JOY_PIN_UP	0
-//#define JOY_PIN_DOWN	0
-//#define JOY_PIN_LEFT	0
-//#define JOY_PIN_RIGHT	0
-//#define JOY_PIN_CENTER 0
 
 // Distribucion de pines GPIO empleada para el enlace IR
 // ATENCION: Valores asociados a los diodos
 #define	IR_TX_PIN		29			// <-----------------------------------------------------------------------------------------------------
 #define	IR_RX_PIN		31			// <-----------------------------------------------------------------------------------------------------
 
-// Distribucion de pines GPIO empleada para la reproducción de efectos
+// Distribucion de pines GPIO empleada para la reproduccion de efectos
 // ATENCION: Valor asociado al pin de salida del reproductor de sonidos
 #define PLAYER_PWM_PIN 	33
 
@@ -90,12 +81,7 @@ enum interruption_sources {
 	TECLADO_FILA_1,
 	TECLADO_FILA_2,
 	TECLADO_FILA_3,
-	TECLADO_FILA_4,
-	//JOYSTICK_UP_ISR,
-	//JOYSTICK_DOWN_ISR,
-	//JOYSTICK_LEFT_ISR,
-	//JOYSTICK_RIGHT_ISR,
-	//JOYSTICK_CENTER_ISR
+	TECLADO_FILA_4
 };
 
 extern volatile int flags_system;

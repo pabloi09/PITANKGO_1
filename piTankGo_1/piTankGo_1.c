@@ -31,9 +31,6 @@ void ConfiguraSistema (TipoSistema *p_sistema) {
 	piLock(SYSTEM_FLAGS_KEY);
 	piLock(STD_IO_BUFFER_KEY);
 
-	// Configurar los pines utilizando las variables definidas en PiTankGoLib.h
-	// ...
-
 	// configura wiringPi
 	if (wiringPiSetupPhys () < 0) {
 		printf ("No se pudo configurar wiringPi\n");
@@ -68,7 +65,7 @@ void InicializaSistema (TipoSistema *p_sistema) {
 
 	TipoPlayer *player=&(p_sistema->player);
 	printf("\nBIENVENIDO A SU TORRETA SOLDADO\n");
-	printf("*: Iniciar juego\tB:Ayuda\tA: Disparar\tD: Finalizar juego\n2: Up\t4: Left\t6: Right\t8: Down\nEl resto de teclas saldran por pantalla\n");
+	printf("*: Iniciar juego\tA: Disparar\tD: Finalizar juego\n2: Up\t4: Left\t6: Right\t8: Down\n El resto de teclas saldran por pantalla\n");
 			fflush(stdout);
 	if(InicializaEfecto(&(player->efecto_disparo),nombre_disparo,frecuenciasDisparo,tiemposDisparo,16)<1){
 		printf("\n[ERROR!!!][InicializaEfecto]\n");
@@ -143,8 +140,8 @@ int main ()
 		{ WAIT_MOVE, CompruebaJoystickLeft, WAIT_MOVE, MueveTorretaIzquierda },
 		{ WAIT_MOVE, CompruebaJoystickRight, WAIT_MOVE, MueveTorretaDerecha },
 		{ WAIT_MOVE, CompruebaTriggerButton, TRIGGER_BUTTON, DisparoIR },
-		{ TRIGGER_BUTTON, CompruebaImpacto, WAIT_MOVE, ImpactoDetectado },
 		{ TRIGGER_BUTTON, CompruebaTimeoutDisparo, WAIT_MOVE, FinalDisparoIR },
+		{ TRIGGER_BUTTON, CompruebaImpacto, WAIT_MOVE, ImpactoDetectado },
 		{ WAIT_MOVE, CompruebaFinalJuego, WAIT_END, FinalizaJuego },
 		{-1, NULL, -1, NULL },
 	};
@@ -155,7 +152,7 @@ int main ()
 	fsm_t* keypad_fsm = fsm_new (WAIT_KEY, keypad, &teclado);
 	fsm_t* torreta_fsm = fsm_new (WAIT_START, torreta, &(sistema.torreta));
 
-	IniciaMelodia (player_fsm);
+	IniciaMelodia (player_fsm);	//Comienza a reproducirse melodia de inicio
 
 	next = millis();
 	while (!flags_system) {
@@ -167,7 +164,6 @@ int main ()
 		delay_until (next);
 	}
 
-	//gpioStopThread(thread_explora_teclado);
 	fsm_destroy(player_fsm);	//Libera las maquina de estados
 	fsm_destroy(columns_fsm);
 	fsm_destroy(keypad_fsm);
@@ -175,6 +171,5 @@ int main ()
 	tmr_destroy(teclado.tmr_duracion_columna);		//Libera los timer
 	tmr_destroy(sistema.player.tmr_notas);
 	tmr_destroy(sistema.torreta.tmr_shoot);
-	//gpioTerminate();
 	return 0;
 }
