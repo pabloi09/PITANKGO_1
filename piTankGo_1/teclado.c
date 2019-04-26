@@ -350,6 +350,10 @@ void process_key (fsm_t* this) {
                	flags_juego |= FLAG_TRIGGER_BUTTON;
                	piUnlock (GAME_FLAGS_KEY);
                	break;
+			}else if(p_teclado->teclaPulsada.row==ROW_2){
+				printf("B: Ayuda\tA: Disparar\tD: Finalizar juego\n2: Up\t4: Left\t6: Right\t8: Down\n El resto de teclas saldran por pantalla\n");
+				fflush(stdout);
+				break;
 			}else if(p_teclado->teclaPulsada.row==ROW_4){
 				printf("\nJUEGO TERMINADO\n");
 				fflush(stdout);
