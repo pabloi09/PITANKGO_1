@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo2"
+    tools:context=".GameActivity">
+    <WebView
+        android:layout_width="380dp"
+        android:layout_height="480dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/video"/>
+    <ImageView
+        android:layout_width="480dp"
+        android:layout_height="480dp"
+        android:id="@+id/look"
+        android:layout_centerInParent="true"
+        android:src="@drawable/mira"/>
+     <android.support.design.widget.FloatingActionButton
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:src="@drawable/before"
+         android:onClick="before"
+         android:tint="@color/colorWhite"
+         android:layout_centerVertical="true"
+         android:background="@color/colorDark"/>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/next"
+        android:onClick="next"
+        android:layout_alignParentEnd="true"
+        android:tint="@color/colorWhite"
+        android:layout_centerVertical="true"
+        android:background="@color/colorDark"/>
+
+
+
+
+</RelativeLayout>
