@@ -31,7 +31,9 @@ void *joystick () {
     	memset(mensaje, 0, sizeof(mensaje));	//Limpiamos el contenido del mensaje anterior
     	int check=0;	//Variable de control de fallos
 
-    	while(serialDataAvail( Serial )<MSGSIZE);	//Esperamos a que se cargue el buffer con un mensaje
+    	if(serialDataAvail( Serial )<MSGSIZE){
+    		//Esperamos a que se cargue el buffer con un mensaje
+    	}else
     	for(int i=0; i<MSGSIZE; i++) {
     		buff=serialGetchar( Serial );	//Leemos cada byte del mensaje
     	    if(i==0 && buff!=bsync){		//Condicion: El primer byte no es el de sincronismo
@@ -50,22 +52,22 @@ void *joystick () {
     	}
 
     	if(check==0 && mensaje[0]==bsync){
-    		if(0 == strcmp((char *)mensaje, RIGHT)){
-    				piLock (GAME_FLAGS_KEY);
+    		if(0 == strcmp((char *)mensaje, RIGHT)){		//--------------------
+    				piLock (GAME_FLAGS_KEY);				//Torreta gira derecha
     				flags_juego |= FLAG_JOYSTICK_RIGHT;
-    				piUnlock (GAME_FLAGS_KEY);
+    				piUnlock (GAME_FLAGS_KEY);				//--------------------
     		}else if(0 == strcmp((char *)mensaje, LEFT)){
-    				piLock(GAME_FLAGS_KEY);
+    				piLock(GAME_FLAGS_KEY);					//Torreta gira izquierda
     				flags_juego |= FLAG_JOYSTICK_LEFT;
-    				piUnlock (GAME_FLAGS_KEY);
+    				piUnlock (GAME_FLAGS_KEY);				//--------------------
     		}else if(0 == strcmp((char *)mensaje, UP)){
-    				piLock (GAME_FLAGS_KEY);
+    				piLock (GAME_FLAGS_KEY);				//Torreta gira arriba
     				flags_juego |= FLAG_JOYSTICK_UP;
-    				piUnlock (GAME_FLAGS_KEY);
+    				piUnlock (GAME_FLAGS_KEY);				//--------------------
     		}else if(0 == strcmp((char *)mensaje, DOWN)){
-    				piLock (GAME_FLAGS_KEY);
+    				piLock (GAME_FLAGS_KEY);				//Torreta gira abajp
     				flags_juego |= FLAG_JOYSTICK_DOWN;
-    				piUnlock (GAME_FLAGS_KEY);
+    				piUnlock (GAME_FLAGS_KEY);				//--------------------
     		}else{
         	        serialFlush( Serial );
     				piLock (STD_IO_BUFFER_KEY);
@@ -80,7 +82,7 @@ void *joystick () {
     }
 
 	tcflush(Serial,TCOFLUSH);
-	serialPutchar(Serial,(char)50);
-    serialClose(Serial);
+	serialPutchar(Serial,(char)50);	//Apagamos el marcador
+    serialClose(Serial);			//Terminamos la conexión serie
     return NULL;
 }

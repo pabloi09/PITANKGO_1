@@ -251,11 +251,11 @@ void process_key (fsm_t* this) {
 	switch(p_teclado->teclaPulsada.col){
         piLock (STD_IO_BUFFER_KEY);
 		case COL_1:
-			softToneWrite (PLAYER_PWM_PIN,984);
+			softToneWrite (PLAYER_PWM_PIN,984);	//	Sonido tecla
 			delay(100);
-			softToneWrite (PLAYER_PWM_PIN,0);
-			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){
-				marcador=1;
+			softToneWrite (PLAYER_PWM_PIN,0);	// Terminar sonido tecla
+			if(p_teclado->teclaPulsada.row==ROW_4 && !(flags_juego & FLAG_SYSTEM_START)){	// Cuando pulsamos * y el juego aún no ha comenzado
+				marcador=1;		//Indica al Arduino que ponga a 0 el marcador
 				piLock (GAME_FLAGS_KEY);
 				flags_juego |= FLAG_SYSTEM_START;
 				piUnlock (GAME_FLAGS_KEY);
@@ -350,6 +350,10 @@ void process_key (fsm_t* this) {
                	flags_juego |= FLAG_TRIGGER_BUTTON;
                	piUnlock (GAME_FLAGS_KEY);
                	break;
+			}else if(p_teclado->teclaPulsada.row==ROW_2){
+				printf("B: Ayuda\tA: Disparar\tD: Finalizar juego\n2: Up\t4: Left\t6: Right\t8: Down\n El resto de teclas saldran por pantalla\n");
+				fflush(stdout);
+				break;
 			}else if(p_teclado->teclaPulsada.row==ROW_4){
 				printf("\nJUEGO TERMINADO\n");
 				fflush(stdout);

@@ -21,20 +21,21 @@ void setup()
   }        
   // inicializar la comunicación serie:
   Serial.begin(9600);
+  Time = millis();
 
 }
 void loop(){
-  do{                                // -----------------------------------------------------------------
+  if( Time + 300 <=  millis() ){   // -----------------------------------------------------------------
     joystick();
-    Time = millis();                 // Ejecutamos joystick() una vez cada 500ms para liberar recursos
-  }while( Time >= millis() + 500 );  // -----------------------------------------------------------------
+    Time = millis();               // Ejecutamos joystick() una vez cada 300ms para liberar recursos
+  }                                // -----------------------------------------------------------------
   
   if (Serial.available() > 0) { //Cuando recibamos un byte
     int incomingByte = Serial.read();
     if(incomingByte == 49){      //Cuando ese byte sea un 1 en ASCII
       score++;   //Aumentamos la puntuación     
     }
-    else if(incomingByte == 50){
+    else if(incomingByte == 50){  //Cuando ese byte sea un 2 en ASCII
       score = -1;
     }
   }

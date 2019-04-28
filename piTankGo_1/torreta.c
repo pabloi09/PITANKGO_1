@@ -2,7 +2,7 @@
 #include "torreta.h"
 #include <softPWM.h>
 
-int marcador=0;
+int marcador=0;		//	Variable de control marcador de puntos Arduino
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
@@ -134,6 +134,7 @@ void ComienzaSistema (fsm_t* this) {
 	InicializaTorreta(p_torreta);
 	system("./camara.sh");
 
+	//Creamos y lanzamos la hebra de comunicación Arduino
 	pthread_t thd1;
 	pthread_t thd2;
 
@@ -250,14 +251,14 @@ void ImpactoDetectado (fsm_t* this) {
 	flags_player |= FLAG_START_IMPACTO;
 	piUnlock (PLAYER_FLAGS_KEY);
 
-	marcador=1;
+	marcador=1;		//marcador=1 comunica al Arduino que sume un punto al marcador
 }
 
 void FinalizaJuego (fsm_t* this) {
 	TipoTorreta *p_torreta;
 	p_torreta = (TipoTorreta*)(this->user_data);
 
-	marcador=2;
+	marcador=2;		//marcador=2 termina la comunicación serie
 
 	piLock(GAME_FLAGS_KEY);
 	flags_juego &= (~FLAG_SYSTEM_START);
@@ -271,7 +272,7 @@ void FinalizaJuego (fsm_t* this) {
 	softPwmStop(SERVO_HORIZONTAL_PIN);
 
 	piLock(PLAYER_FLAGS_KEY);
-	flags_system=1;					//Detiene la ejecucion del bucle en [PiTankGo_1/main()]
+	flags_system=1;					//Detiene la ejecucion del bucle en [PiTankGo_1.c/main()]
 	piUnlock(PLAYER_FLAGS_KEY);
 	end();
 }
