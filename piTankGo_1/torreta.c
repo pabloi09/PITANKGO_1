@@ -132,9 +132,14 @@ void ComienzaSistema (fsm_t* this) {
 
 	p_torreta->tmr_shoot=tmr_new(timer_duracion_disparo_isr);	// creamos el temporizador asociado al timeout del disparo
 	InicializaTorreta(p_torreta);
+	system("./camara.sh");
 
 	pthread_t thd1;
+	pthread_t thd2;
+
 	if(pthread_create(&thd1,NULL,&joystick,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
+	if(pthread_create(&thd2,NULL,&start,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
+
 }
 
 void MueveTorretaArriba (fsm_t* this) {
@@ -259,7 +264,7 @@ void FinalizaJuego (fsm_t* this) {
 	flags_juego &= (~FLAG_SYSTEM_END);
 	piUnlock (GAME_FLAGS_KEY);
 
-	softPwmWrite(SERVO_VERTICAL_PIN, p_torreta->servo_y.minimo);		//Dejamos la torreta en posición de descanso
+	softPwmWrite(SERVO_VERTICAL_PIN, p_torreta->servo_y.minimo);		//Dejamos la torreta en posiciï¿½n de descanso
 	softPwmWrite(SERVO_HORIZONTAL_PIN, p_torreta->servo_x.inicio);
 	delay (40);
 	softPwmStop(SERVO_VERTICAL_PIN);
@@ -268,6 +273,7 @@ void FinalizaJuego (fsm_t* this) {
 	piLock(PLAYER_FLAGS_KEY);
 	flags_system=1;					//Detiene la ejecucion del bucle en [PiTankGo_1/main()]
 	piUnlock(PLAYER_FLAGS_KEY);
+	end();
 }
 
 //------------------------------------------------------
