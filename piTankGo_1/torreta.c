@@ -134,12 +134,12 @@ void ComienzaSistema (fsm_t* this) {
 	InicializaTorreta(p_torreta);
 	system("./camara.sh");
 
-	//Creamos y lanzamos la hebra de comunicación Arduino
+	//Creamos y lanzamos la hebra de comunicaciï¿½n Arduino
 	pthread_t thd1;
 	pthread_t thd2;
 
 	if(pthread_create(&thd1,NULL,&joystick,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
-	if(pthread_create(&thd2,NULL,&start,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
+	if(pthread_create(&thd2,NULL,&start,0)!=0){printf("\nNo se pudo iniciar la rutina Camara\n");}
 
 }
 
@@ -258,7 +258,7 @@ void FinalizaJuego (fsm_t* this) {
 	TipoTorreta *p_torreta;
 	p_torreta = (TipoTorreta*)(this->user_data);
 
-	marcador=2;		//marcador=2 termina la comunicación serie
+	marcador=2;		//marcador=2 termina la comunicaciï¿½n serie
 
 	piLock(GAME_FLAGS_KEY);
 	flags_juego &= (~FLAG_SYSTEM_START);
