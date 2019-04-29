@@ -1,8 +1,9 @@
 #include "CamaraController.h"
 
 void *start(){
-    system(START);
+    ppid = fork();
+    execv(START);
 }
 void *end(){
-    system(END);
+    kill(pid,SIGKILL);
 }
