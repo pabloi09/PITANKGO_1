@@ -132,14 +132,12 @@ void ComienzaSistema (fsm_t* this) {
 
 	p_torreta->tmr_shoot=tmr_new(timer_duracion_disparo_isr);	// creamos el temporizador asociado al timeout del disparo
 	InicializaTorreta(p_torreta);
-	system("./camara.sh");
 
 	//Creamos y lanzamos la hebra de comunicaci�n Arduino
 	pthread_t thd1;
 	pthread_t thd2;
 
 	if(pthread_create(&thd1,NULL,&joystick,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
-	delay (400);
 	if(pthread_create(&thd2,NULL,&start,0)!=0){printf("\nNo se pudo iniciar la rutina Camara\n");}
 
 }
@@ -275,7 +273,7 @@ void FinalizaJuego (fsm_t* this) {
 	piLock(PLAYER_FLAGS_KEY);
 	flags_system=1;					//Detiene la ejecucion del bucle en [PiTankGo_1.c/main()]
 	piUnlock(PLAYER_FLAGS_KEY);
-	end();
+
 }
 
 //------------------------------------------------------

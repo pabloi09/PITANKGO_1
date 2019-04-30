@@ -8,6 +8,7 @@
 
 #include "fsm.h"
 #include "tmr.h"
+#include "CamaraController.h"
 
 #define CLK_MS 10 // PERIODO DE ACTUALIZACION DE LA MAQUINA ESTADOS EN MILISEGUNDOS
 

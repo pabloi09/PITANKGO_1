@@ -13,6 +13,7 @@
 #include "SerialReader.h"
 #include <pthread.h>
 
+
 //Parametros del PWM: 1)num de intervalos de 100us en el ciclo del PWM		2)num de intervalos incrementados
 //3)PWM minimo		4)PWM maximo
 #define SERVO_PWM_RANGE		400

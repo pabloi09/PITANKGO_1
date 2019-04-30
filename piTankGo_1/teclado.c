@@ -358,6 +358,7 @@ void process_key (fsm_t* this) {
 				printf("\nJUEGO TERMINADO\n");
 				fflush(stdout);
 				piLock(GAME_FLAGS_KEY);
+				end();
 				flags_juego |= FLAG_SYSTEM_END;
 				piUnlock (GAME_FLAGS_KEY);
 				p_teclado->teclaPulsada.row = -1;

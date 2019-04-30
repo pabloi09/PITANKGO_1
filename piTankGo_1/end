@@ -1,0 +1,4 @@
+#!/bin/bash
+PID=$(pstree -s -p | grep -P -o 'lxterminal\([0-9]+\)' | grep -P -o '[0-9]+')
+echo  Matando terminal con PID $PID
+kill -9 $PID
