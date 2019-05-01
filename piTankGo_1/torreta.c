@@ -139,6 +139,8 @@ void ComienzaSistema (fsm_t* this) {
 
 	if(pthread_create(&thd1,NULL,&joystick,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
 	if(pthread_create(&thd2,NULL,&start,0)!=0){printf("\nNo se pudo iniciar la rutina Camara\n");}
+	getIP();
+
 
 }
 
