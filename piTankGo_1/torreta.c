@@ -252,6 +252,9 @@ void ImpactoDetectado (fsm_t* this) {
 	flags_player |= FLAG_START_IMPACTO;
 	piUnlock (PLAYER_FLAGS_KEY);
 
+	digitalWrite (IR_TX_PIN, LOW); //Apagamos el led
+	tmr_stop(p_torreta->tmr_shoot); // Eliminamos la interrupcion?
+
 	marcador=1;		//marcador=1 comunica al Arduino que sume un punto al marcador
 }
 
