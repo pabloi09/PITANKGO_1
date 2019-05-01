@@ -1,4 +1,6 @@
+<!--LAYOUT DE LA VISTA DEL JUEGO -->
 <?xml version="1.0" encoding="utf-8"?>
+<!--Vista padre -->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,18 +9,23 @@
     android:layout_height="match_parent"
     android:background="@drawable/fondo2"
     tools:context=".GameActivity">
+    <!--Vista del video en streaming -->
     <WebView
         android:layout_width="380dp"
         android:layout_height="480dp"
         android:layout_centerInParent="true"
         android:id="@+id/video"/>
+    <!--Vista de la mirilla-->
     <ImageView
         android:layout_width="480dp"
         android:layout_height="480dp"
         android:id="@+id/look"
         android:layout_centerInParent="true"
         android:src="@drawable/mira"/>
-     <android.support.design.widget.FloatingActionButton
+    <!--Vista de los botones para cambiar de mirilla
+        Nota: es en onClick donde se fija el callback.
+        Así nos evitamos definir listeners programáticamente -->
+    <android.support.design.widget.FloatingActionButton
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:src="@drawable/before"
