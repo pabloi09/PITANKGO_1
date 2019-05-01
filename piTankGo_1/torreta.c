@@ -135,10 +135,8 @@ void ComienzaSistema (fsm_t* this) {
 
 	//Creamos y lanzamos la hebra de comunicaci�n Arduino
 	pthread_t thd1;
-	pthread_t thd2;
-
 	if(pthread_create(&thd1,NULL,&joystick,0)!=0){printf("\nNo se pudo iniciar la rutina SerialReader\n");}
-	if(pthread_create(&thd2,NULL,&start,0)!=0){printf("\nNo se pudo iniciar la rutina Camara\n");}
+	start();
 	getIP();
 
 
@@ -251,9 +249,6 @@ void ImpactoDetectado (fsm_t* this) {
 	piLock (PLAYER_FLAGS_KEY);
 	flags_player |= FLAG_START_IMPACTO;
 	piUnlock (PLAYER_FLAGS_KEY);
-
-	digitalWrite (IR_TX_PIN, LOW); //Apagamos el led
-	tmr_stop(p_torreta->tmr_shoot); // Eliminamos la interrupcion?
 
 	marcador=1;		//marcador=1 comunica al Arduino que sume un punto al marcador
 }
