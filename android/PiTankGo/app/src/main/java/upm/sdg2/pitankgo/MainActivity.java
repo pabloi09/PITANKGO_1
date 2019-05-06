@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
-/*Clase corresponiente a la actividad MainActivity */
+/*Clase corresponiente a la actividad MainActivity.java */
 public class MainActivity extends AppCompatActivity {
     /*Variables de clase*/
     String url="";
