@@ -10,4 +10,6 @@ The toy has a infrared detector and it detects if you hit the mark. All supporte
 
 For helping the user pointing, the toy has a camera and streams video in a local server. We have created an Android app to connect to this server and watch the streaming.
 
+Demo: https://www.youtube.com/watch?v=5AVBlDOxMVs&t=1s
+
 Co-created by Diego López Rodrigo and Pablo Martín Redondo
