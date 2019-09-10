@@ -1,4 +1,4 @@
-# PITANKGO_1: University project for Digital Systems Course
+# PITANKGO_1
 
 PiTankGo is a electronic toy based on a program implemented on C and executed in a Raspberry Pi. You have a infrared light "gun" and you can controll it in two ways:
 
