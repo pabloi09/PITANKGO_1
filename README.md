@@ -1,19 +1,10 @@
-# PITANKGO_1
+# PITANKGO_1: University project for Digital Systems Course
 
-Trabajo de la asignatura de SDG2 de Diego López y Pablo Martín Redondo
-MAPEO PINES PiGPIO:
-http://abyz.me.uk/rpi/pigpio/index.html
-EJEMPLO INICIALIZACION PiGPIO:
-https://elinux.org/RPi_GPIO_Code_Samples#pigpio
-TO DO LIST:
-https://gpiozero.readthedocs.io/en/stable/remote_gpio.html
+PiTankGo is a electronic toy based on a program implemented on C and executed in a Raspberry Pi. You have a infrared light "gun" and you can controll it in two ways:
 
+-With a numeric keyboard (ISR)
+-With an accelerometer. The info given by this sensor is translated A/D using an Arduino mega 2560 and transmited to the Raspi by USB
 
-# IDEAS MEJORAS
--Ponerle una batería y ruedas
-
--Ponerle una cámara
-
--Giroscopio como joystick
-
--PiGpio
+The toy has a infrared detector and it detects if you hit the mark. All supported with sound effects.
+For helping the user pointing, the toy has a camera and streams video in a local server. We have created an Android app to connect to this server and watch the streaming.
+Co-created by Diego López Rodrigo and Pablo Martín Redodno
